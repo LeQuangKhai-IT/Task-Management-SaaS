@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('checklist_id')->constrained('checklists')->cascadeOnDelete();
             $table->text('text');
             $table->boolean('completed')->default(false);
-            $table->double('position');
+            $table->double('position', 15, 8)->default(0.0);
             $table->softDeletesTz();
         });
     }

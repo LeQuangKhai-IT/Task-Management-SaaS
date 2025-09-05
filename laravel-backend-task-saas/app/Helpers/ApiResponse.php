@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Helpers;
 
-use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Http\JsonResponse;
 
-abstract class Controller extends BaseController
+class ApiResponse
 {
-    protected function success($data = null, string $message = 'Success', int $code = 200)
+    public static function success($data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
         return response()->json([
             'success' => true,
@@ -15,7 +15,7 @@ abstract class Controller extends BaseController
         ], $code);
     }
 
-    protected function error(string $message = 'Error', int $code = 400, $errors = null)
+    public static function error(string $message = 'Error', int $code = 400, $errors = null): JsonResponse
     {
         return response()->json([
             'success' => false,

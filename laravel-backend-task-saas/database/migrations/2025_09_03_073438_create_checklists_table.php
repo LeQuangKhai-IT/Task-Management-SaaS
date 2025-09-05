@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('card_id')->constrained('cards')->cascadeOnDelete();
             $table->string('title');
-            $table->double('position');
+            $table->double('position', 15, 8)->default(0.0);
             $table->softDeletesTz();
         });
     }

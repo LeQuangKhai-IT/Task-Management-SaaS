@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('type', 50);
             $table->foreignUuid('uploaded_by')->constrained('users')->nullOnDelete();
-            $table->boolean('archived')->default(false);
             $table->timestampTz('created_at')->nullable();
             $table->softDeletesTz();
         });

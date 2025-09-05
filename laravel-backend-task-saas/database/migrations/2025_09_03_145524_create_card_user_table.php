@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignUuid('card_id')->constrained('cards')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->unique(['card_id', 'user_id']);
-            $table->softDeletesTz();
         });
     }
 

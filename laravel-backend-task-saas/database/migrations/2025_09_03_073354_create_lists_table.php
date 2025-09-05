@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('board_id')->constrained('boards')->cascadeOnDelete();
             $table->string('name');
-            $table->double('position');
+            $table->double('position', 15, 8)->default(0.0);
             $table->boolean('archived')->default(false);
             $table->timestampsTz();
             $table->softDeletesTz();

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('list_id')->constrained('lists')->cascadeOnDelete();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->double('position');
+            $table->double('position', 15, 8)->default(0.0);
             $table->timestampTz('due_date')->nullable();
             $table->boolean('archived')->default(false);
             $table->timestampsTz();

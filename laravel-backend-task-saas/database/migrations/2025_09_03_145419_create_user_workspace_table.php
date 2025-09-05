@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('role', 50)->default('member');
             $table->unique(['workspace_id', 'user_id']);
-            $table->softDeletesTz();
         });
     }
 
