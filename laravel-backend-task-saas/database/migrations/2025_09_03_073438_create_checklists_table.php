@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->double('position', 15, 8)->default(0.0);
             $table->softDeletesTz();
+            $table->timestampsTz();
         });
     }
 

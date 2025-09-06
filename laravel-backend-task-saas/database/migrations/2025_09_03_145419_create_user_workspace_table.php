@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_workspace', function (Blueprint $table) {
-            $table->uuid('id')->primary();
             $table->foreignUuid('workspace_id')->constrained('workspaces')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->string('role', 50)->default('member');

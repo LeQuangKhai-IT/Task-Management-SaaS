@@ -20,108 +20,149 @@ use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\WorkspaceUserController;
 
 
-// AUTH ROUTES
-Route::controller(AuthController::class)->group(function () {
+/******************* AUTH ROUTES *******************/
+Route::controller(AuthController::class)->name('auth.')->group(function () {
     Route::prefix('auth')->group(function () {
-        Route::post('login', 'login')->name('auth.login');
-        Route::post('register', 'register')->name('auth.register');
-        Route::post('forgot-password', 'forgot-password')->name('auth.password.forgot');
-        Route::post('reset-password', 'reset-password')->name('auth.password.reset');
+        Route::post('login', 'login')->middleware(['throttle:login'])->name('login');
+        Route::post('register', 'register')->name('register');
+        Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
+        Route::post('reset-password', 'resetPassword')->name('password.reset');
         Route::prefix('email')->group(function () {
-            Route::post('verify', 'verify')->name('auth.email.verify');
-            Route::post('resend', 'resend')->name('auth.email.resend');
+            Route::post('verify', 'verify')->name('email.verify');
+            Route::post('resend', 'resend')->name('email.resend');
         });
 
-        Route::middleware('auth:api')->group(function () {
-            Route::post('logout', 'logout')->name('auth.logout');
-            Route::post('refresh', 'refresh')->name('auth.refresh');
-            Route::post('change-password', 'change-password')->name('auth.password.change');
-            Route::get('me', 'me')->name('auth.me');
+        Route::middleware('[auth:api]')->group(function () {
+            Route::post('logout', 'logout')->name('logout');
+            Route::post('refresh', 'refresh')->name('refresh');
+            Route::post('change-password', 'changePassword')->name('password.change');
+            Route::get('me', 'me')->name('me');
         });
     });
 });
 
 
-// MAIN RESOURCES
-Route::apiResources([
-    'users' => UserController::class,
-    'workspace' => WorkspaceController::class,
-    'board' => BoardController::class,
-    'lists' => ListController::class,
-    'cards' => CardController::class,
-]);
+/******************* USER ROUTES *******************/
+Route::apiResource('users', UserController::class)
+    ->middlewareFor(
+        ['index', 'show', 'store', 'update', 'destroy'],
+        ['auth:api']
+    );
 
 
-// WORKSPACE USER
-Route::prefix('workspaces/{workspace}')->group(function () {
-    Route::get('users', [WorkspaceUserController::class, 'index']);
-    Route::post('users', [WorkspaceUserController::class, 'store'])->name('workspaces.users.add');
-    Route::delete('users/{user}', [WorkspaceUserController::class, 'destroy'])->name('workspaces.users.remove');
+/******************* WORKSPACE ROUTES *******************/
+Route::apiResource('workspace', WorkspaceController::class)
+    ->middlewareFor(
+        ['index', 'show', 'store', 'update', 'destroy'],
+        ['auth:api']
+    );
+
+
+/******************* BOARD ROUTES *******************/
+Route::apiResource('board', BoardController::class)
+    ->middlewareFor(
+        ['index', 'show', 'store', 'update', 'destroy'],
+        ['auth:api']
+    );
+
+
+/******************* LIST ROUTES *******************/
+Route::apiResource('lists', ListController::class)
+    ->middlewareFor(
+        ['index', 'show', 'store', 'update', 'destroy'],
+        ['auth:api']
+    );
+
+
+/******************* CARD ROUTES *******************/
+Route::apiResource('cards', CardController::class)
+    ->middlewareFor(
+        ['index', 'show', 'store', 'update', 'destroy'],
+        ['auth:api']
+    );
+
+
+/******************* WORKSPACE USER *******************/
+Route::prefix('workspaces/{workspace}')->name('workspaces.')->group(function () {
+    Route::controller(WorkspaceUserController::class)->group(function () {
+        Route::get('users', 'index')->name('users');
+        Route::post('users', 'store')->name('users.add');
+        Route::delete('users/{user}', 'destroy')->name('users.remove');
+    });
 });
 
 
-// BOARD USER
-Route::prefix('boards/{board}')->group(function () {
-    Route::get('users', [BoardUserController::class, 'index']);
-    Route::post('users', [BoardUserController::class, 'store'])->name('boards.join');
-    Route::delete('users/{user}', [BoardUserController::class, 'destroy'])->name('boards.leave');
+/******************* BOARD USER *******************/
+Route::prefix('boards/{board}')->name('boards.')->group(function () {
+    Route::controller(BoardUserController::class)->group(function () {
+        Route::get('users', 'index')->name('users');
+        Route::post('users', 'store')->name('users.join');
+        Route::delete('users/{user}', 'destroy')->name('users.leave');
+    });
 
-    // Labels
-    Route::apiResource('labels', LabelController::class)->only(['index', 'store', 'update', 'destroy']);
+    //Labels
+    Route::apiResource('labels', LabelController::class);
 
-    // Activities (read-only)
-    Route::get('activities', [ActivityController::class, 'index'])->name('boards.activities.index');
+    //Activities (read-only)
+    Route::get('activities', [ActivityController::class, 'index'])->name('activities.index');
 });
 
 
-// CARD RELATIONS
+/******************* CARD RELATIONS *******************/
 Route::prefix('cards/{card}')->group(function () {
-    // users
-    Route::get('users', [CardUserController::class, 'index']);
-    Route::post('users', [CardUserController::class, 'store'])->name('cards.users.assign');
-    Route::delete('users/{user}', [CardUserController::class, 'destroy'])->name('cards.users.unassign');
+    //users
+    Route::controller(CardUserController::class)->group(function () {
+        Route::get('users', 'index')->name('cards.users');
+        Route::post('users', 'store')->name('cards.users.assign');
+        Route::delete('users/{user}', 'destroy')->name('cards.users.unassign');
+    });
 
-    // Labels
-    Route::get('labels', [CardLabelController::class, 'index']);
-    Route::post('labels', [CardLabelController::class, 'store'])->name('cards.labels.attach');
-    Route::delete('labels/{label}', [CardLabelController::class, 'destroy'])->name('cards.labels.detach');
+    //Labels
+    Route::controller(CardLabelController::class)->group(function () {
+        Route::get('users', 'index')->name('cards.labels');
+        Route::post('users', 'store')->name('cards.labels.attach');
+        Route::delete('users/{user}', 'destroy')->name('cards.labels.detach');
+    });
 
     // Checklists
-    Route::apiResource('checklists', ChecklistController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::apiResource('checklists', ChecklistController::class);
 
     // Attachments
-    Route::apiResource('attachments', AttachmentController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('attachments', AttachmentController::class);
 
-    // Upload file 
+    //Upload file 
     Route::post('attachments', [AttachmentController::class, 'upload'])
         ->middleware('auth:api')
         ->name('cards.attachments.upload');
 
-    // Comments
-    Route::apiResource('comments', CommentController::class)->only(['index', 'store', 'update', 'destroy']);
+    //Comments
+    Route::apiResource('comments', CommentController::class);
 });
 
 
-// CHECKLIST ITEMS (nested)
+/******************* CHECKLIST ITEMS (nested) *******************/
 Route::prefix('checklists/{checklist}')->group(function () {
-    Route::apiResource('items', ChecklistItemController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::apiResource('items', ChecklistItemController::class);
 });
 
-// Search boards
+
+/******************* SEARCH *******************/
+//Search boards
 Route::get('/boards/search', [BoardController::class, 'search'])
     ->name('boards.search');
 
-// Search cards
+//Search cards
 Route::get('/cards/search', [CardController::class, 'search'])
     ->name('cards.search');
 
-// Search users 
+//Search users 
 Route::get('/users/search', [UserController::class, 'search'])
     ->name('users.search');
 
-// Search workspaces
+//Search workspaces
 Route::get('/workspaces/search', [WorkspaceController::class, 'search'])
     ->name('workspaces.search');
 
-// Fallback (code 404)
+
+/******************* FALLBACK *******************/
 Route::fallback(FallbackController::class);

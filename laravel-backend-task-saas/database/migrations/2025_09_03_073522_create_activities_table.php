@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users')->nullOnDelete();
             $table->string('type', 50);
             $table->jsonb('data');
-            $table->timestampTz('created_at')->nullable();
+            $table->timestampsTz();
             $table->softDeletesTz();
         });
     }

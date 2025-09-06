@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('text');
             $table->boolean('completed')->default(false);
             $table->double('position', 15, 8)->default(0.0);
+            $table->timestampsTz();
             $table->softDeletesTz();
         });
     }

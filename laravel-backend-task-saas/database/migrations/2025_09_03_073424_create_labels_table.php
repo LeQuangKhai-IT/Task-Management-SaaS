@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignUuid('board_id')->constrained('boards')->nullOnDelete();
             $table->string('name');
             $table->string('color', 50);
+            $table->timestampsTz();
         });
     }
 

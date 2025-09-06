@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('card_user', function (Blueprint $table) {
-            $table->uuid('id')->primary();
             $table->foreignUuid('card_id')->constrained('cards')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->unique(['card_id', 'user_id']);

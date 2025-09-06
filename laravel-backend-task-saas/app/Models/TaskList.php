@@ -18,7 +18,7 @@ class TaskList extends Model
      *
      * @var string
      */
-    protected $primaryKey = 'list_id';
+    protected $primaryKey = 'id';
 
     /**
      * Indicates if the model's ID is auto-incrementing.
