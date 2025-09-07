@@ -30,7 +30,7 @@ class Board extends Model
         'name',
         'description',
         'background',
-        'is_public'
+        'visibility'
     ];
 
     /**

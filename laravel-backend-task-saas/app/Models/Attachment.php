@@ -25,8 +25,8 @@ class Attachment extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'url',
         'name',
+        'url',
         'type',
         'uploaded_by',
     ];

@@ -25,7 +25,7 @@ class Checklist_item extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'text',
+        'content',
         'completed',
         'position',
     ];

@@ -51,7 +51,7 @@ Route::apiResource('users', UserController::class)
 
 
 /******************* WORKSPACE ROUTES *******************/
-Route::apiResource('workspace', WorkspaceController::class)
+Route::apiResource('workspaces', WorkspaceController::class)
     ->middlewareFor(
         ['index', 'show', 'store', 'update', 'destroy'],
         ['auth:api']
@@ -59,7 +59,7 @@ Route::apiResource('workspace', WorkspaceController::class)
 
 
 /******************* BOARD ROUTES *******************/
-Route::apiResource('board', BoardController::class)
+Route::apiResource('boards', BoardController::class)
     ->middlewareFor(
         ['index', 'show', 'store', 'update', 'destroy'],
         ['auth:api']
@@ -136,7 +136,7 @@ Route::prefix('cards/{card}')->group(function () {
         ->name('cards.attachments.upload');
 
     //Comments
-    Route::apiResource('comments', CommentController::class);
+    Route::apiResource('comments', CommentController::class)->except('update');
 });
 
 

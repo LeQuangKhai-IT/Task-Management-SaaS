@@ -24,7 +24,7 @@ class Comment extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'text',
+        'content',
     ];
 
     /**

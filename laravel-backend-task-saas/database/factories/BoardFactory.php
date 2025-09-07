@@ -22,7 +22,7 @@ class BoardFactory extends Factory
             'description' => $this->faker->optional()->paragraph,
             'workspace_id' => $this->faker->optional()->randomElement(Workspace::pluck('id')->toArray()),
             'background' => $this->faker->randomElement(['#3498db', '#e74c3c', '#2ecc71', 'https://example.com/image.jpg']),
-            'is_public' => $this->faker->boolean(20),
+            'visibility' => $this->faker->boolean(20),
             'created_at' => now(),
             'updated_at' => now(),
         ];

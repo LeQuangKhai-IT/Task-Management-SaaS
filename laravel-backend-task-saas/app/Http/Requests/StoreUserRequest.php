@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,33 +22,34 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => 'required|string|unique:users|lowercase|min:6|max:255',
-            'email' => 'required|string|email|unique:users,email|max:255',
-            'password' => 'required|string|confirmed|min:8',
+            'username' => 'required|string|max:255',
+            'fullname' => 'nullable|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
         ];
     }
 
     /**
-     * Get the error messages for the defined validation rules.
+     * Customize the error messages.
      *
-     * @return array<string, string>
+     * @return array
      */
-    public function messages(): array
+    public function messages()
     {
         return [
-            'username.required' => 'The username is required',
+            'username.required' => 'The username field is required.',
             'username.string' => 'The username must be a string.',
-            'username.lowercase' => 'The username must be a lowercase',
-            'username.min' => 'The username may not be less than 6 characters.',
             'username.max' => 'The username may not be greater than 255 characters.',
 
-            'email.required' => 'The email is required.',
-            'email.string' => 'The email must be a string.',
+            'fullname.string' => 'The fullname must be a string.',
+            'fullname.max' => 'The fullname may not be greater than 255 characters.',
+
+            'email.required' => 'The email field is required.',
             'email.email' => 'The email must be a valid email address.',
             'email.max' => 'The email may not be greater than 255 characters.',
             'email.unique' => 'The email has already been taken.',
 
-            'password.required' => 'The password is required.',
+            'password.required' => 'The password field is required.',
             'password.string' => 'The password must be a string.',
             'password.min' => 'The password must be at least 8 characters.',
             'password.confirmed' => 'The password confirmation does not match.',
