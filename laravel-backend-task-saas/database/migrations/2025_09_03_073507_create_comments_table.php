@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('card_id')->constrained('cards')->cascadeOnDelete();
             $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
             $table->text('content');
-            $table->timestampsTz();
+            $table->timestamps();
         });
     }
 

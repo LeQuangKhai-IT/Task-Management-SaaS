@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('checklists', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('card_id')->constrained('cards')->cascadeOnDelete();
-            $table->string('name');
+            $table->text('title');
             $table->double('position', 15, 8)->default(0.0);
-            $table->softDeletesTz();
-            $table->timestampsTz();
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreChecklistItemRequest extends FormRequest
 {
@@ -50,5 +52,18 @@ class StoreChecklistItemRequest extends FormRequest
             'position.numeric' => 'The position must be a number.',
             'position.min' => 'The position must be at least 0.',
         ];
+    }
+
+    /**
+     * Response with json
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }

@@ -19,9 +19,8 @@ class TaskListFactory extends Factory
     {
         return [
             'board_id' => Board::factory(),
-            'name' => $this->faker->word,
+            'title' => $this->faker->word,
             'position' => $this->faker->randomFloat(2, 0, 100),
-            'archived' => $this->faker->boolean(10),
             'created_at' => now(),
             'updated_at' => now(),
         ];

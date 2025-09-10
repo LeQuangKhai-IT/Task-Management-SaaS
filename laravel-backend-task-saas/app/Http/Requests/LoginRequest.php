@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoginRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|unique:users,email|max:255',
+            'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:8'
         ];
     }
@@ -40,11 +41,23 @@ class LoginRequest extends FormRequest
             'email.string' => 'The email must be a string.',
             'email.email' => 'The email must be a valid email address.',
             'email.max' => 'The email may not be greater than 255 characters.',
-            'email.unique' => 'The email has already been taken.',
 
             'password.required' => 'The password is required.',
             'password.string' => 'The password must be a string.',
             'password.min' => 'The password must be at least 8 characters.',
         ];
+    }
+
+    /**
+     * Response with json
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }

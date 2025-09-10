@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rule;
 
 class UpdateAttachmentRequest extends FormRequest
@@ -12,7 +14,7 @@ class UpdateAttachmentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -58,5 +60,18 @@ class UpdateAttachmentRequest extends FormRequest
             'type.max' => 'The file type may not be greater than 50 characters.',
             'type.in' => 'The file type must be one of: image/jpeg, image/png, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document.',
         ];
+    }
+
+    /**
+     * Response with json
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }

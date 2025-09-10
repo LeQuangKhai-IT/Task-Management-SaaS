@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreBoardRequest extends FormRequest
 {
@@ -50,5 +52,18 @@ class StoreBoardRequest extends FormRequest
 
             'visibility.in' => 'The visibility must be one of: public, private, workspace.',
         ];
+    }
+
+    /**
+     * Response with json
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }

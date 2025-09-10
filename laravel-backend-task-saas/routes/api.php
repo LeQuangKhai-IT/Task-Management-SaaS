@@ -22,25 +22,24 @@ use App\Http\Controllers\WorkspaceUserController;
 
 
 /******************* AUTH ROUTES *******************/
-Route::controller(AuthController::class)->name('auth.')->group(function () {
-    Route::prefix('auth')->group(function () {
-        Route::post('login', 'login')->middleware(['throttle:login'])->name('login');
-        Route::post('register', 'register')->name('register');
-        Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
-        Route::post('reset-password', 'resetPassword')->name('password.reset');
-        // Email route
-        Route::post('check-email', 'checkEmail')->name('email.check');
-        Route::post('send-verify-email', 'checkEmail')->name('email.check');
-        Route::get('verify-email/{token}', 'verifyEmail')->name('email.verify');
-        Route::post('verify-complete', 'complete')->name('email.verify.complete');
-        Route::post('resend-email', 'resendEmail')->name('email.resend');
+Route::controller(AuthController::class)->group(function () {
 
-        Route::middleware('[auth:api]')->group(function () {
-            Route::post('logout', 'logout')->name('logout');
-            Route::post('refresh', 'refresh')->name('refresh');
-            Route::post('change-password', 'changePassword')->name('password.change');
-            Route::get('me', 'me')->name('me');
-        });
+    Route::post('login', 'login')->middleware(['throttle:login'])->name('login');
+    Route::post('register', 'register')->name('register');
+    Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
+    Route::post('reset-password/{token}/{email}', 'resetPassword')->name('password.reset');
+    // Email route
+    Route::post('check-email', 'checkEmail')->name('email.check');
+    Route::post('send-verify-email', 'checkEmail')->name('email.check');
+    Route::get('verify-email', 'verifyEmail')->name('email.verify');
+    Route::post('verify-complete', 'complete')->name('email.verify.complete');
+    Route::post('resend-email', 'resendEmail')->name('email.resend');
+    // Need check token
+    Route::middleware('jwt.auth')->group(function () {
+        Route::post('logout', 'logout')->name('logout');
+        Route::post('refresh', 'refresh')->name('refresh');
+        Route::post('change-password', 'changePassword')->name('password.change');
+        Route::get('me', 'me')->name('me');
     });
 });
 

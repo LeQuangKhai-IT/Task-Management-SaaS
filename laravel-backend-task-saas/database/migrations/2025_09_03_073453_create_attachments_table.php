@@ -14,12 +14,16 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('card_id')->constrained('cards')->cascadeOnDelete();
-            $table->string('url');
-            $table->string('name');
-            $table->string('type', 50);
+            $table->string('url')->nullable();
+            $table->text('title')->nullable();
+            $table->enum('type', ['file', 'url']);
+            $table->string('file_name')->nullable();
+            $table->string('file_path')->nullable();
+            $table->string('file_type')->nullable();
+            $table->unsignedBigInteger('file_size')->nullable();
             $table->foreignUuid('uploaded_by')->constrained('users')->nullOnDelete();
-            $table->timestampsTz();
-            $table->softDeletesTz();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

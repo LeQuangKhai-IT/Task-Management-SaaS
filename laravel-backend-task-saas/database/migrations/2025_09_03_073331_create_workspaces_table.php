@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignUuid('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('visibility', ['private', 'public'])->default('private');
-            $table->timestampsTz();
-            $table->softDeletesTz();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AfterVerifyEmailRequest extends FormRequest
 {
@@ -45,5 +47,18 @@ class AfterVerifyEmailRequest extends FormRequest
             'password.required' => 'Please enter a password.',
             'password.min'      => 'Password must be at least 8 characters.',
         ];
+    }
+
+    /**
+     * Response with json
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }

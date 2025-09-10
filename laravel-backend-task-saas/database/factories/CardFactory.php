@@ -19,11 +19,10 @@ class CardFactory extends Factory
     {
         return [
             'list_id' => TaskList::factory(),
-            'name' => $this->faker->sentence(4),
+            'title' => $this->faker->sentence(4),
             'description' => $this->faker->optional()->paragraph,
             'position' => $this->faker->randomFloat(2, 0, 100),
             'due_date' => $this->faker->optional()->dateTimeBetween('now', '+1 month'),
-            'archived' => $this->faker->boolean(10),
             'created_at' => now(),
         ];
     }

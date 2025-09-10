@@ -2,41 +2,35 @@
 
 namespace App\Mail;
 
+namespace App\Mail;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
-use App\Models\User;
 
 class ResetPassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
-    public $url;
+    public $resetLink;
 
-    public function __construct(User $user, string $url)
+    /**
+     * Create a new message instance.
+     */
+    public function __construct($resetLink)
     {
-        $this->user = $user;
-        $this->url  = $url;
+        $this->resetLink = $resetLink;
     }
 
+    /**
+     * Build the message.
+     */
     public function build()
     {
-        return $this->subject('Reset Your Password')
+        return $this->subject('Password Reset Request')
             ->markdown('emails.reset-password')
             ->with([
-                'user' => $this->user,
-                'url'  => $this->url,
+                'url' => $this->resetLink,
             ]);
-    }
-
-    public function sendResetPasswordMail(User $user)
-    {
-        $url = url('/reset-password?token=' . $user->reset_token);
-
-        Mail::to($user->email)->send(new ResetPassword($user, $url));
-
-        return response()->json(['message' => 'Password reset email sent!']);
     }
 }

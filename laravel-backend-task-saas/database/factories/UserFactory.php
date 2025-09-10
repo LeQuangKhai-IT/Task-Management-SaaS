@@ -27,6 +27,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'fullname' => $this->faker->userName,
             'password' => Hash::make('password'), // Defaut password is 'password'
+            'email_verified_at' => now(),
             'avatar_url' => $this->faker->optional()->imageUrl(200, 200, 'people'),
             'created_at' => now(),
             'updated_at' => now(),

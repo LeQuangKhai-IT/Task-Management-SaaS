@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('labels', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('board_id')->constrained('boards')->nullOnDelete();
-            $table->string('name');
+            $table->text('title');
             $table->string('color', 50);
-            $table->timestampsTz();
+            $table->timestamps();
         });
     }
 

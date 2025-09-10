@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('boards', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
+            $table->text('title');
             $table->text('description')->nullable();
             $table->foreignUuid('workspace_id')->constrained('workspaces')->cascadeOnDelete();
             $table->string('background')->nullable();
             $table->enum('visibility', ['private', 'workspace', 'public'])->default('private');
-            $table->timestampsTz();
-            $table->softDeletesTz();
+            $table->boolean('is_archived')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('list_id')->constrained('lists')->cascadeOnDelete();
-            $table->string('name');
+            $table->text('title');
             $table->text('description')->nullable();
+            $table->boolean('completed')->default(false);
             $table->double('position', 15, 8)->default(0.0);
-            $table->timestampTz('due_date')->nullable();
-            $table->boolean('archived')->default(false);
-            $table->timestampsTz();
-            $table->softDeletesTz();
+            $table->timestamp('due_date')->nullable();
+            $table->boolean('is_archived')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

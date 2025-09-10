@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('lists', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('board_id')->constrained('boards')->cascadeOnDelete();
-            $table->string('name');
+            $table->text('title');
             $table->double('position', 15, 8)->default(0.0);
-            $table->boolean('archived')->default(false);
-            $table->timestampsTz();
-            $table->softDeletesTz();
+            $table->boolean('is_archived')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -19,7 +19,7 @@ class LabelFactory extends Factory
     {
         return [
             'board_id' => Board::factory(),
-            'name' => $this->faker->word,
+            'title' => $this->faker->word,
             'color' => $this->faker->hexColor,
             'created_at' => now(),
             'updated_at' => now(),

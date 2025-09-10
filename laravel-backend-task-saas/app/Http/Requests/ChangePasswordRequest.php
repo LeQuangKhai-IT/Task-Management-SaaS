@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ChangePasswordRequest extends FormRequest
 {
@@ -23,7 +25,7 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => 'required|string|min:8|current_password:api',
-            'new_password' => 'required|string|min:8|confirmed|different:current_password',
+            'new_password' => 'required|string|min:8|different:current_password',
         ];
     }
 
@@ -43,12 +45,20 @@ class ChangePasswordRequest extends FormRequest
             'new_password.required' => 'The new password is required.',
             'new_password.string' => 'The new password must be a string.',
             'new_password.min' => 'The new password must be at least 8 characters.',
-            'new_password.confirmed' => 'The new password confirmation does not match.',
             'new_password.different' => 'The new password must be different from the current password.',
-
-            'new_password_confirmation.required' => 'The new password confirmation is required.',
-            'new_password_confirmation.string' => 'The new password confirmation must be a string.',
-            'new_password_confirmation.min' => 'The new password confirmation must be at least 8 characters.',
         ];
+    }
+
+    /**
+     * Response with json
+     */
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'message' => 'Validation failed',
+                'errors'  => $validator->errors(),
+            ], 422)
+        );
     }
 }

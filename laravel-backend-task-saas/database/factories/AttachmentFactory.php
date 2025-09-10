@@ -21,8 +21,12 @@ class AttachmentFactory extends Factory
         return [
             'card_id' => Card::factory(),
             'url' => $this->faker->url,
-            'name' => $this->faker->word . '.pdf',
-            'type' => $this->faker->randomElement(['image', 'pdf', 'document']),
+            'title' => $this->faker->word,
+            'type' => $this->faker->randomElement(['file', 'url']),
+            'file_name' => $this->faker->slug(3, true) . '.' . $this->faker->fileExtension(),
+            'file_path' => 'files/' . $this->faker->uuid() . '/' . $this->faker->slug(3, true) . '.' . $this->faker->fileExtension(),
+            'file_type' => $this->faker->mimeType(),
+            'file_size' => $this->faker->numberBetween(1024, 5242880),
             'uploaded_by' => User::factory(),
             'created_at' => now(),
         ];
