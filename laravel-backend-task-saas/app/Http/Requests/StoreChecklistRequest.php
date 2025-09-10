@@ -23,11 +23,11 @@ class StoreChecklistRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('checklists', 'title')->where('card_id', $this->card_id),
+                Rule::unique('checklists', 'name')->where('card_id', $this->card_id),
             ],
             'card_id' => 'required|uuid|exists:cards,id',
             'position' => 'nullable|numeric|min:0',
@@ -42,10 +42,10 @@ class StoreChecklistRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'The checklist title is required.',
-            'title.string' => 'The checklist title must be a string.',
-            'title.max' => 'The checklist title may not be greater than 255 characters.',
-            'title.unique' => 'The checklist title already exists for this card.',
+            'name.required' => 'The checklist name is required.',
+            'name.string' => 'The checklist name must be a string.',
+            'name.max' => 'The checklist name may not be greater than 255 characters.',
+            'name.unique' => 'The checklist name already exists for this card.',
 
             'card_id.required' => 'The card ID is required.',
             'card_id.uuid' => 'The card ID must be a valid UUID.',

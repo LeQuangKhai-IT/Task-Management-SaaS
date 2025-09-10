@@ -19,7 +19,7 @@ class Checklist_itemFactory extends Factory
     {
         return [
             'checklist_id' => Checklist::factory(),
-            'text' => $this->faker->sentence,
+            'content' => $this->faker->sentence,
             'completed' => $this->faker->boolean(30),
             'position' => $this->faker->randomFloat(2, 0, 100),
         ];

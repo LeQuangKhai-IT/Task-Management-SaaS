@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('checklist_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('checklist_id')->constrained('checklists')->cascadeOnDelete();
-            $table->string('content');
+            $table->text('content');
             $table->boolean('completed')->default(false);
             $table->double('position', 15, 8)->default(0.0);
             $table->timestampsTz();

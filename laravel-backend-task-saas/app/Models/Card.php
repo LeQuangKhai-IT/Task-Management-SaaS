@@ -27,7 +27,7 @@ class Card extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'title',
+        'name',
         'description',
         'position',
         'due_date',

@@ -22,7 +22,7 @@ class UpdateCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string|max:2000',
             'list_id' => 'sometimes|uuid|exists:lists,id',
             'position' => 'sometimes|numeric|min:0',
@@ -39,8 +39,8 @@ class UpdateCardRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.string' => 'The card title must be a string.',
-            'title.max' => 'The card title may not be greater than 255 characters.',
+            'name.string' => 'The card name must be a string.',
+            'name.max' => 'The card name may not be greater than 255 characters.',
 
             'description.string' => 'The description must be a string.',
             'description.max' => 'The description may not be greater than 2000 characters.',

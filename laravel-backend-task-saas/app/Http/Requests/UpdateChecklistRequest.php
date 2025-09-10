@@ -24,11 +24,11 @@ class UpdateChecklistRequest extends FormRequest
     {
         $checklist = $this->route('checklist');
         return [
-            'title' => [
+            'name' => [
                 'sometimes',
                 'string',
                 'max:255',
-                Rule::unique('checklists', 'title')->where('card_id', $checklist->card_id)->ignore($checklist->id),
+                Rule::unique('checklists', 'name')->where('card_id', $checklist->card_id)->ignore($checklist->id),
             ],
             'position' => 'sometimes|numeric|min:0',
         ];
@@ -43,9 +43,9 @@ class UpdateChecklistRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.string' => 'The checklist title must be a string.',
-            'title.max' => 'The checklist title may not be greater than 255 characters.',
-            'title.unique' => 'The checklist title already exists for this card.',
+            'name.string' => 'The checklist name must be a string.',
+            'name.max' => 'The checklist name may not be greater than 255 characters.',
+            'name.unique' => 'The checklist name already exists for this card.',
 
             'position.numeric' => 'The position must be a number.',
             'position.min' => 'The position must be at least 0.',

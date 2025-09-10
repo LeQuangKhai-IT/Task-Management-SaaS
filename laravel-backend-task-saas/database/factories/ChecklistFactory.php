@@ -19,7 +19,7 @@ class ChecklistFactory extends Factory
     {
         return [
             'card_id' => Card::factory(),
-            'title' => $this->faker->sentence(3),
+            'name' => $this->faker->sentence(3),
             'position' => $this->faker->randomFloat(2, 0, 100),
         ];
     }

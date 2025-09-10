@@ -21,7 +21,7 @@ class CommentFactory extends Factory
         return [
             'card_id' => Card::factory(),
             'user_id' => User::factory(),
-            'text' => $this->faker->paragraph,
+            'content' => $this->faker->paragraph,
             'created_at' => now(),
             'updated_at' => now(),
         ];

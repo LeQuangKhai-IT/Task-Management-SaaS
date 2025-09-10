@@ -10,6 +10,7 @@ class ApiResponse
             'success' => true,
             'message' => $message,
             'data'    => $data,
+            'authorisation' => true
         ], $code);
     }
 

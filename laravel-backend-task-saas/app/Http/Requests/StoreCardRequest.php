@@ -22,7 +22,7 @@ class StoreCardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'list_id' => 'required|uuid|exists:lists,id',
             'position' => 'nullable|numeric|min:0',
@@ -40,9 +40,9 @@ class StoreCardRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'The card title is required.',
-            'title.string' => 'The card title must be a string.',
-            'title.max' => 'The card title may not be greater than 255 characters.',
+            'name.required' => 'The card name is required.',
+            'name.string' => 'The card name must be a string.',
+            'name.max' => 'The card name may not be greater than 255 characters.',
 
             'description.string' => 'The description must be a string.',
             'description.max' => 'The description may not be greater than 2000 characters.',

@@ -1,20 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BoarActivityController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\BoardLabelController;
 use App\Http\Controllers\BoardUserController;
+use App\Http\Controllers\CardAttachmentController;
+use App\Http\Controllers\CardChecklistController;
+use App\Http\Controllers\CardCommentController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\CardLabelController;
 use App\Http\Controllers\CardUserController;
-use App\Http\Controllers\ChecklistController;
 use App\Http\Controllers\ChecklistItemController;
-use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FallbackController;
-use App\Http\Controllers\LabelController;
 use App\Http\Controllers\ListController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\WorkspaceUserController;
@@ -27,10 +28,12 @@ Route::controller(AuthController::class)->name('auth.')->group(function () {
         Route::post('register', 'register')->name('register');
         Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
         Route::post('reset-password', 'resetPassword')->name('password.reset');
-        Route::prefix('email')->group(function () {
-            Route::post('verify', 'verify')->name('email.verify');
-            Route::post('resend', 'resend')->name('email.resend');
-        });
+        // Email route
+        Route::post('check-email', 'checkEmail')->name('email.check');
+        Route::post('send-verify-email', 'checkEmail')->name('email.check');
+        Route::get('verify-email/{token}', 'verifyEmail')->name('email.verify');
+        Route::post('verify-complete', 'complete')->name('email.verify.complete');
+        Route::post('resend-email', 'resendEmail')->name('email.resend');
 
         Route::middleware('[auth:api]')->group(function () {
             Route::post('logout', 'logout')->name('logout');
@@ -101,10 +104,10 @@ Route::prefix('boards/{board}')->name('boards.')->group(function () {
     });
 
     //Labels
-    Route::apiResource('labels', LabelController::class);
+    Route::apiResource('labels', BoardLabelController::class);
 
     //Activities (read-only)
-    Route::get('activities', [ActivityController::class, 'index'])->name('activities.index');
+    Route::get('activities', [BoarActivityController::class, 'index'])->name('activities.index');
 });
 
 
@@ -125,18 +128,18 @@ Route::prefix('cards/{card}')->group(function () {
     });
 
     // Checklists
-    Route::apiResource('checklists', ChecklistController::class);
+    Route::apiResource('checklists', CardChecklistController::class);
 
     // Attachments
-    Route::apiResource('attachments', AttachmentController::class);
+    Route::apiResource('attachments', CardAttachmentController::class);
 
     //Upload file 
-    Route::post('attachments', [AttachmentController::class, 'upload'])
+    Route::post('attachments', [CardAttachmentController::class, 'upload'])
         ->middleware('auth:api')
         ->name('cards.attachments.upload');
 
     //Comments
-    Route::apiResource('comments', CommentController::class)->except('update');
+    Route::apiResource('comments', CardCommentController::class)->except('update');
 });
 
 
@@ -148,21 +151,8 @@ Route::prefix('checklists/{checklist}')->group(function () {
 
 /******************* SEARCH *******************/
 //Search boards
-Route::get('/boards/search', [BoardController::class, 'search'])
-    ->name('boards.search');
-
-//Search cards
-Route::get('/cards/search', [CardController::class, 'search'])
-    ->name('cards.search');
-
-//Search users 
-Route::get('/users/search', [UserController::class, 'search'])
-    ->name('users.search');
-
-//Search workspaces
-Route::get('/workspaces/search', [WorkspaceController::class, 'search'])
-    ->name('workspaces.search');
-
+Route::get('/search', [SearchController::class, 'index'])
+    ->name('search.global');
 
 /******************* FALLBACK *******************/
 Route::fallback(FallbackController::class);

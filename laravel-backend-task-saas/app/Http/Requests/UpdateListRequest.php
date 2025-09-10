@@ -22,7 +22,7 @@ class UpdateListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'position' => 'sometimes|numeric|min:0',
             'archived' => 'sometimes|boolean',
         ];
@@ -36,8 +36,8 @@ class UpdateListRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.string' => 'The list title must be a string.',
-            'title.max' => 'The list title may not be greater than 255 characters.',
+            'name.string' => 'The list name must be a string.',
+            'name.max' => 'The list name may not be greater than 255 characters.',
 
             'position.numeric' => 'The position must be an double.',
             'position.min' => 'The position must be at least 0.',

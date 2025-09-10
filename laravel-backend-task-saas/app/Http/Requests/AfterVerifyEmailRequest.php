@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateWorkspaceRequest extends FormRequest
+class AfterVerifyEmailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,9 @@ class UpdateWorkspaceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string|max:1000',
+            'email'    => 'required|email|exists:users,email',
+            'name'     => 'required|string|max:255',
+            'password' => 'required|string|min:8',
         ];
     }
 
@@ -35,11 +36,14 @@ class UpdateWorkspaceRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.string' => 'The workspace name must be a string.',
-            'name.max' => 'The workspace name may not be greater than 255 characters.',
+            'email.required' => 'Please enter your email.',
+            'email.email'    => 'Invalid email format.',
+            'email.exists'   => 'This email is not registered.',
 
-            'description.string' => 'The description must be a string.',
-            'description.max' => 'The description may not be greater than 1000 characters.',
+            'fullname.required' => 'Please enter your full name.',
+
+            'password.required' => 'Please enter a password.',
+            'password.min'      => 'Password must be at least 8 characters.',
         ];
     }
 }

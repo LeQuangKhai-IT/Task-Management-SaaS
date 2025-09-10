@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('list_id')->constrained('lists')->cascadeOnDelete();
-            $table->string('title');
+            $table->string('name');
             $table->text('description')->nullable();
             $table->double('position', 15, 8)->default(0.0);
             $table->timestampTz('due_date')->nullable();

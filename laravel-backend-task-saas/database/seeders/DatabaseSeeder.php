@@ -16,6 +16,7 @@ use App\Models\Attachment;
 use App\Models\Activity;
 use App\Models\Checklist_item;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,11 +28,9 @@ class DatabaseSeeder extends Seeder
         // Create 10 random users and 1 admin
         User::factory()->count(10)->create();
         $admin = User::create([
-            'username' => 'admin',
             'email' => 'admin@gmail.com',
             'fullname' => 'i am admin',
-            'password' => bcrypt('password'),
-            'avatar_url' => null,
+            'password' => Hash::make('password'),
             'created_at' => now(),
             'updated_at' => now(),
         ]);

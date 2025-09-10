@@ -22,7 +22,7 @@ class StoreListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'board_id' => 'required|uuid|exists:boards,id',
             'position' => 'nullable|numeric|min:0',
             'archived' => 'sometimes|boolean',
@@ -37,9 +37,9 @@ class StoreListRequest extends FormRequest
     public function messages()
     {
         return [
-            'title.required' => 'The list title is required.',
-            'title.string' => 'The list title must be a string.',
-            'title.max' => 'The list title may not be greater than 255 characters.',
+            'name.required' => 'The list name is required.',
+            'name.string' => 'The list name must be a string.',
+            'name.max' => 'The list name may not be greater than 255 characters.',
 
             'board_id.required' => 'The board ID is required.',
             'board_id.uuid' => 'The board ID must be a valid UUID.',
