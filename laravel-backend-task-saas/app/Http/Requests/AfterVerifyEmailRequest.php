@@ -24,8 +24,8 @@ class AfterVerifyEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => 'required|email|exists:users,email',
-            'name'     => 'required|string|max:255',
+            'email'    => 'required|email',
+            'fullname'     => 'required|string|max:255',
             'password' => 'required|string|min:8',
         ];
     }

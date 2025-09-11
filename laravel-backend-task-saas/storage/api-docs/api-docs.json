@@ -12,114 +12,6 @@
         }
     ],
     "paths": {
-        "/api/login": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login",
-                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string",
-                                        "default": "admin@gmail.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "default": "password"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Unauthorized"
-                    }
-                }
-            }
-        },
-        "/api/forgot-password": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Forgot Password",
-                "operationId": "7af8817e88ba5874543ff38f188248f1",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            }
-        },
-        "/api/reset-password": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Reset Password",
-                "operationId": "00c0aad74830221c6da409a1355ec736",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "token": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "default": "password"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "401": {
-                        "description": "Invalid token or email"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            }
-        },
         "/api/register": {
             "post": {
                 "tags": [
@@ -134,7 +26,7 @@
                                 "properties": {
                                     "email": {
                                         "type": "string",
-                                        "default": "admin@gmail.com"
+                                        "default": "leequangkhai621@gmail.com"
                                     }
                                 },
                                 "type": "object"
@@ -144,31 +36,26 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "Send verify email successfully."
                     }
                 }
             }
         },
-        "/api/verify-complete": {
+        "/api/resend-verify-email": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Complete User Profile",
-                "operationId": "a957ac1f6264ee75d801fcca99161846",
+                "summary": "Resend Verification Email",
+                "operationId": "89654d4fcadf8ff74ba8c9774d9ceab9",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
                                 "properties": {
                                     "email": {
-                                        "type": "string"
-                                    },
-                                    "fullname": {
-                                        "type": "string"
-                                    },
-                                    "password": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "leequangkhai621@gmail.com"
                                     }
                                 },
                                 "type": "object"
@@ -178,41 +65,10 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "Verification email resent successfully."
                     },
-                    "403": {
-                        "description": "Email not verified"
-                    }
-                }
-            }
-        },
-        "/api/check-email": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Check Email Existence",
-                "operationId": "ff64cff5e21b2a67efda6e48a362b304",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "Email not found"
+                    "400": {
+                        "description": "This email has not been register."
                     }
                 }
             }
@@ -249,18 +105,58 @@
                         "description": "Email verified successfully"
                     },
                     "400": {
-                        "description": "Invalid verification link"
+                        "description": "Email verification failed"
                     }
                 }
             }
         },
-        "/api/resend-email": {
+        "/api/verify-complete": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Resend Verification Email",
-                "operationId": "f67e4337997b5a2479827f0496635ed4",
+                "summary": "Complete User Profile",
+                "operationId": "a957ac1f6264ee75d801fcca99161846",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "default": "leequangkhai621@gmail.com"
+                                    },
+                                    "fullname": {
+                                        "type": "string",
+                                        "default": "Lê Quang Khải"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "default": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Profile completed successfully."
+                    },
+                    "401": {
+                        "description": "This email has not been verify."
+                    }
+                }
+            }
+        },
+        "/api/check-email": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Check Email Existence",
+                "operationId": "ff64cff5e21b2a67efda6e48a362b304",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -277,80 +173,153 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "Email already registered."
                     },
-                    "400": {
-                        "description": "This email has already been verified"
+                    "404": {
+                        "description": "Email not found"
                     }
                 }
             }
         },
-        "/api/refresh": {
+        "/api/login": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Refresh JWT Token",
-                "operationId": "2c27d311a2876560fcb5a754b556cdc5",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "example": {
-                                                "user": {
-                                                    "id": 1,
-                                                    "email": "user@example.com"
-                                                },
-                                                "token": "new_jwt_token"
-                                            }
-                                        }
+                "summary": "Login",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "default": "leequangkhai621@gmail.com"
                                     },
-                                    "type": "object"
-                                }
+                                    "password": {
+                                        "type": "string",
+                                        "default": "password"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
-                    },
-                    "400": {
-                        "description": "Could not refresh token"
-                    },
-                    "401": {
-                        "description": "Invalid or expired token"
                     }
                 },
-                "security": [
-                    {
-                        "bearerAuth": []
+                "responses": {
+                    "200": {
+                        "description": "Successful authentication"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
                     }
-                ]
+                }
             }
         },
-        "/api/logout": {
+        "/api/forgot-password": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Logout User",
-                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Could not logout"
-                    },
-                    "401": {
-                        "description": "Invalid or expired token"
+                "summary": "Forgot Password",
+                "operationId": "7af8817e88ba5874543ff38f188248f1",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "default": "leequangkhai621@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
                     }
                 },
-                "security": [
-                    {
-                        "bearerAuth": []
+                "responses": {
+                    "200": {
+                        "description": "Password reset link has been sent to your email"
+                    },
+                    "404": {
+                        "description": "User not exits"
                     }
-                ]
+                }
+            }
+        },
+        "/api/resend-forgot-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Resend Forgot Password",
+                "operationId": "668389037bc65328535a7fb257517e56",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "default": "leequangkhai621@gmail.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Forgot password resent successfully."
+                    },
+                    "400": {
+                        "description": "This email has not been register."
+                    }
+                }
+            }
+        },
+        "/api/reset-password": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset Password",
+                "operationId": "00c0aad74830221c6da409a1355ec736",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "userID": {
+                                        "type": "string"
+                                    },
+                                    "token": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "default": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Password reset successfully."
+                    },
+                    "401": {
+                        "description": "Invalid token or email"
+                    },
+                    "404": {
+                        "description": "User not found"
+                    }
+                }
             }
         },
         "/api/me": {
@@ -421,7 +390,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "Password changed successfully"
                     },
                     "400": {
                         "description": "Could not change password"
@@ -435,6 +404,193 @@
                         "bearerAuth": []
                     }
                 ]
+            }
+        },
+        "/api/refresh": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh JWT Token",
+                "operationId": "2c27d311a2876560fcb5a754b556cdc5",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "example": {
+                                                "user": {
+                                                    "id": 1,
+                                                    "email": "user@example.com"
+                                                },
+                                                "token": "new_jwt_token"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Could not refresh token"
+                    },
+                    "401": {
+                        "description": "Invalid or expired token"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout User",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Logout successfully"
+                    },
+                    "400": {
+                        "description": "Could not logout"
+                    },
+                    "401": {
+                        "description": "Invalid or expired token"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/{provider}/redirect": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Redirect to provider login page",
+                "description": "Supported providers: google, github, slack",
+                "operationId": "ef28a92994363afab01d183a006c3761",
+                "parameters": [
+                    {
+                        "name": "provider",
+                        "in": "path",
+                        "description": "Authentication provider (google|github|slack)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "google",
+                                "github",
+                                "slack"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to provider login page",
+                        "headers": {
+                            "Location": {
+                                "description": "URL of provider login page",
+                                "schema": {
+                                    "type": "string",
+                                    "example": "https://accounts.google.com/o/oauth2/auth?..."
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/{provider}/callback": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Handle provider callback",
+                "description": "After login via Google/GitHub/Slack, backend will create user and return JWT token",
+                "operationId": "637bd7b7ce14925bbe174ee226c7b44c",
+                "parameters": [
+                    {
+                        "name": "provider",
+                        "in": "path",
+                        "description": "Authentication provider (google|github|slack)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Login success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Login success"
+                                        },
+                                        "access_token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOi..."
+                                        },
+                                        "token_type": {
+                                            "type": "string",
+                                            "example": "Bearer"
+                                        },
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "01993906-c75c-72a0-b3fd-db5da877f928"
+                                                },
+                                                "fullname": {
+                                                    "type": "string",
+                                                    "example": "Lê Quang Khải"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "leequangkhai621@gmail.com"
+                                                },
+                                                "avatar_url": {
+                                                    "type": "string",
+                                                    "example": "https://lh3.googleusercontent.com/..."
+                                                },
+                                                "provider": {
+                                                    "type": "string",
+                                                    "example": "google"
+                                                },
+                                                "provider_id": {
+                                                    "type": "string",
+                                                    "example": "112233445566778899"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized or invalid provider"
+                    }
+                }
             }
         }
     },

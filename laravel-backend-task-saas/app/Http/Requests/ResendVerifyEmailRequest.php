@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ResendEmailRequest extends FormRequest
+class ResendVerifyEmailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class ResendEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|string|email|exists:users,email',
+            'email' => 'required|string|email',
         ];
     }
 
@@ -39,7 +39,6 @@ class ResendEmailRequest extends FormRequest
             'email.required' => 'The email is required.',
             'email.string' => 'The email must be a string.',
             'email.email' => 'The email must be a valid email address.',
-            'email.unique' => 'The email has already been taken.',
         ];
     }
 

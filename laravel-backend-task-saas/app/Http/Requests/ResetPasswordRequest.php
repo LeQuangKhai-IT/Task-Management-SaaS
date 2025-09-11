@@ -15,7 +15,6 @@ class ResetPasswordRequest extends FormRequest
      */
     public function authorize()
     {
-        // Allow all users to make this request
         return true;
     }
 
@@ -27,9 +26,9 @@ class ResetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
+            'userID' => 'required|uuid',
             'token' => 'required',
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:8',
         ];
     }
 
@@ -41,15 +40,14 @@ class ResetPasswordRequest extends FormRequest
     public function messages()
     {
         return [
-            'token.required' => 'The token field is required.',
+            'userID.required' => 'The userID field is required.',
+            'userID.uuid' => 'The userID field have to uuid.',
 
-            'email.required' => 'The email field is required.',
-            'email.email' => 'The email must be a valid email address.',
-            'email.exists' => 'The provided email does not exist in our records.',
+            'token.required' => 'The token field is required.',
 
             'password.required' => 'The password field is required.',
             'password.min' => 'The password must be at least 8 characters.',
-            'password.confirmed' => 'The password confirmation does not match.',
+            'password.different' => "The new password and current password must be different."
         ];
     }
 

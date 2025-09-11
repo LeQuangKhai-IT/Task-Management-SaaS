@@ -16,6 +16,7 @@ use App\Http\Controllers\ChecklistItemController;
 use App\Http\Controllers\FallbackController;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\WorkspaceUserController;
@@ -27,13 +28,14 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login')->middleware(['throttle:login'])->name('login');
     Route::post('register', 'register')->name('register');
     Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
-    Route::post('reset-password/{token}/{email}', 'resetPassword')->name('password.reset');
+    Route::post('resend-forgot-password', 'resendForgotPassword')->name('password.forgot.resend');
+    Route::post('reset-password', 'resetPassword')->name('password.reset');
     // Email route
     Route::post('check-email', 'checkEmail')->name('email.check');
     Route::post('send-verify-email', 'checkEmail')->name('email.check');
     Route::get('verify-email', 'verifyEmail')->name('email.verify');
     Route::post('verify-complete', 'complete')->name('email.verify.complete');
-    Route::post('resend-email', 'resendEmail')->name('email.resend');
+    Route::post('resend-verify-email', 'resendVerifyEmail')->name('email.verify.resend');
     // Need check token
     Route::middleware('jwt.auth')->group(function () {
         Route::post('logout', 'logout')->name('logout');
@@ -152,6 +154,13 @@ Route::prefix('checklists/{checklist}')->group(function () {
 //Search boards
 Route::get('/search', [SearchController::class, 'index'])
     ->name('search.global');
+
+/******************* SOCIAL AUTH *******************/
+Route::controller(SocialAuthController::class)->group(function () {
+    Route::get('{provider}/redirect', 'redirect');
+    Route::get('{provider}/callback', 'callback');
+});
+
 
 /******************* FALLBACK *******************/
 Route::fallback(FallbackController::class);

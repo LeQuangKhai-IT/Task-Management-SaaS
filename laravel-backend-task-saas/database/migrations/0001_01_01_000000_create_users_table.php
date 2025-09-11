@@ -16,18 +16,25 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('fullname')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('verification_token', 64)->nullable()->unique();
             $table->string('password')->nullable();
+            $table->string('provider')->nullable();     // google, github, slack
+            $table->string('provider_id')->nullable();  // id of user in provider
             $table->string('avatar_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->uuid('userID')->primary();
             $table->string('token');
             $table->timestamps();
-            $table->softDeletes();
+        });
+
+        // Store email address has not been verified
+        Schema::create('email_verifications', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('verification_token', 64)->nullable()->unique();
+            $table->timestamps();
         });
     }
 
@@ -38,5 +45,6 @@ return new class extends Migration
     {
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('email_verifications');
     }
 };

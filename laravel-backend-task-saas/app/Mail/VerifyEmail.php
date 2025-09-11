@@ -11,12 +11,12 @@ class VerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $user;
+    public $email;
     public $url;
 
-    public function __construct(User $user, string $url)
+    public function __construct(string $email, string $url)
     {
-        $this->user = $user;
+        $this->email = $email;
         $this->url  = $url;
     }
 
@@ -25,7 +25,7 @@ class VerifyEmail extends Mailable
         return $this->subject('Verify your email for Trello')
             ->markdown('emails.verify')
             ->with([
-                'user' => $this->user,
+                'email' => $this->email,
                 'url'  => $this->url,
             ]);
     }
