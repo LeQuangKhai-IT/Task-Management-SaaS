@@ -26,6 +26,7 @@ class UpdateWorkspaceRequest extends FormRequest
         return [
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'visibility' => 'nullable|string|in:public,private',
         ];
     }
 
@@ -42,6 +43,9 @@ class UpdateWorkspaceRequest extends FormRequest
 
             'description.string' => 'The description must be a string.',
             'description.max' => 'The description may not be greater than 1000 characters.',
+
+            'visibility.string' => 'The visibility must be a string.',
+            'visibility.in' => 'The visibility may be public or private.',
         ];
     }
 

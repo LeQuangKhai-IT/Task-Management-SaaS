@@ -13,7 +13,18 @@ use Illuminate\Support\Str;
 class ListController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/lists",
+     *     summary="Get all lists",
+     *     tags={"Lists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board_id", in="query", required=false,
+     *         description="Filter by board id",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Lists retrieved")
+     * )
      */
     public function index(Request $request)
     {
@@ -46,7 +57,21 @@ class ListController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/lists",
+     *     summary="Create new list",
+     *     tags={"Lists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             required={"board_id","title","position"},
+     *             @OA\Property(property="board_id", type="string", format="uuid"),
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="position", type="double")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="List created")
+     * )
      */
     public function store(StoreListRequest $request)
     {
@@ -54,13 +79,12 @@ class ListController extends Controller
             // Authenticate user with JWT token
             JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->validate();
+            $validatedData = $request->only('title', 'position', 'is_archived');
 
             $list = TaskList::create([
                 'id' => Str::uuid()->toString(),
                 'board_id' => $validatedData['board_id'],
-                'name' => $validatedData['name'],
-                'archived' => $validatedData['archived'],
+                'title' => $validatedData['title'],
                 'position' => $validatedData['position'],
             ]);
 
@@ -77,7 +101,18 @@ class ListController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/lists/{id}",
+     *     summary="Get list by id",
+     *     tags={"Lists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="List retrieved"),
+     *     @OA\Response(response=404, description="List not found")
+     * )
      */
     public function show(string $id)
     {
@@ -104,7 +139,25 @@ class ListController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/lists/{id}",
+     *     summary="Update list",
+     *     tags={"Lists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string"),
+     *             @OA\Property(property="is_archived", type="boolean"),
+     *             @OA\Property(property="position", type="double")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="List updated"),
+     *     @OA\Response(response=404, description="List not found")
+     * )
      */
     public function update(UpdateListRequest $request, string $id)
     {
@@ -118,7 +171,7 @@ class ListController extends Controller
                 return ApiResponse::error('List not found', 404);
             }
 
-            $validatedData = $request->validate();
+            $validatedData = $request->only('title', 'position', 'is_archived');
 
             $list->update($validatedData);
 
@@ -135,7 +188,18 @@ class ListController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/lists/{id}",
+     *     summary="Delete list",
+     *     tags={"Lists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="List deleted"),
+     *     @OA\Response(response=404, description="List not found")
+     * )
      */
     public function destroy(string $id)
     {

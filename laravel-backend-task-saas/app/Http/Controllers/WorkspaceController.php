@@ -4,15 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ApiResponse;
 use App\Http\Requests\StoreWorkspaceRequest;
+use App\Http\Requests\UpdateWorkspaceRequest;
 use App\Models\Workspace;
-use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Str;
 
 class WorkspaceController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/workspaces",
+     *     summary="Get all workspaces",
+     *     tags={"Workspaces"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Workspaces retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="workspaces", type="array",
+     *                     @OA\Items(ref="#/components/schemas/Workspace")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=400, description="Could not retrieve workspaces")
+     * )
      */
     public function index()
     {
@@ -35,7 +56,29 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/workspaces",
+     *     summary="Create a new workspace",
+     *     tags={"Workspaces"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Workspace")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Workspace created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="workspace", ref="#/components/schemas/Workspace")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Validation error")
+     * )
      */
     public function store(StoreWorkspaceRequest $request)
     {
@@ -43,7 +86,7 @@ class WorkspaceController extends Controller
             // Authenticate user with JWT token
             JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->validate();
+            $validatedData = $request->only('name', 'description', 'visibility');
 
             $workspace = Workspace::create([
                 'id' => Str::uuid()->toString(),
@@ -65,7 +108,33 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/workspaces/{id}",
+     *     summary="Get a workspace by ID",
+     *     tags={"Workspaces"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Workspace UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Workspace retrieved successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="workspace", ref="#/components/schemas/Workspace")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Workspace not found"),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
      */
     public function show(string $id)
     {
@@ -92,9 +161,39 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/workspaces/{id}",
+     *     summary="Update a workspace",
+     *     tags={"Workspaces"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Workspace UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Workspace")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Workspace updated successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="workspace", ref="#/components/schemas/Workspace")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Workspace not found"),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateWorkspaceRequest $request, string $id)
     {
         try {
             // Authenticate user with JWT token
@@ -106,7 +205,7 @@ class WorkspaceController extends Controller
                 return ApiResponse::error('Workspace not found', 404);
             }
 
-            $validatedData = $request->validate();
+            $validatedData = $request->only('name', 'description', 'visibility');
 
             $workspace->update($validatedData);
 
@@ -123,7 +222,22 @@ class WorkspaceController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/workspaces/{id}",
+     *     summary="Delete a workspace",
+     *     tags={"Workspaces"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Workspace UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Workspace deleted successfully"),
+     *     @OA\Response(response=404, description="Workspace not found"),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
      */
     public function destroy(string $id)
     {

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('email')->unique();
             $table->string('fullname')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('email_verified_at');
             $table->string('password')->nullable();
             $table->string('provider')->nullable();     // google, github, slack
             $table->string('provider_id')->nullable();  // id of user in provider

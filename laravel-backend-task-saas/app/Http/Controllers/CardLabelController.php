@@ -10,7 +10,20 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class CardLabelController extends Controller
 {
-    // Retrieve all labels attached to a card
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/labels",
+     *     summary="Get all labels attached to a card",
+     *     tags={"Card Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Labels retrieved"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function index(Card $card)
     {
         try {
@@ -35,7 +48,28 @@ class CardLabelController extends Controller
         }
     }
 
-    // Attach a label to a card
+    /**
+     * @OA\Post(
+     *     path="/api/cards/{card}/labels",
+     *     summary="Attach a label to a card",
+     *     tags={"Card Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"label_id"},
+     *             @OA\Property(property="label_id", type="string", format="uuid")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Label attached"),
+     *     @OA\Response(response=400, description="Invalid or already attached"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function store(Request $request, Card $card)
     {
         try {
@@ -74,8 +108,26 @@ class CardLabelController extends Controller
         }
     }
 
-    // Detach a label from a card
-    public function destroy(Request $request, Card $card, Label $label)
+    /**
+     * @OA\Delete(
+     *     path="/api/cards/{card}/labels/{label}",
+     *     summary="Detach a label from a card",
+     *     tags={"Card Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="label", in="path", required=true,
+     *         description="Label ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Label detached"),
+     *     @OA\Response(response=404, description="Label not found in card/board"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
+    public function destroy(Card $card, Label $label)
     {
         try {
             // Authenticate user with JWT token

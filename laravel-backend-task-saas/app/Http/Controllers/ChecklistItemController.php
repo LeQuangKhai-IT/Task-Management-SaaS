@@ -11,7 +11,20 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class ChecklistItemController extends Controller
 {
-    // Retrieve all items for a checklist
+    /**
+     * @OA\Get(
+     *     path="/api/checklists/{checklist}/items",
+     *     summary="Get all checklist items",
+     *     tags={"Checklist Items"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="checklist", in="path", required=true,
+     *         description="Checklist ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Items retrieved"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function index(Checklist $checklist)
     {
         try {
@@ -36,7 +49,27 @@ class ChecklistItemController extends Controller
         }
     }
 
-    // Create a new checklist item
+    /**
+     * @OA\Post(
+     *     path="/api/checklists/{checklist}/items",
+     *     summary="Create checklist item",
+     *     tags={"Checklist Items"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="checklist", in="path", required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="is_completed", type="boolean")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Item created"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function store(Request $request, Checklist $checklist)
     {
         try {
@@ -72,7 +105,18 @@ class ChecklistItemController extends Controller
         }
     }
 
-    // Retrieve a specific checklist item by ID
+    /**
+     * @OA\Get(
+     *     path="/api/checklists/{checklist}/items/{item}",
+     *     summary="Get checklist item by ID",
+     *     tags={"Checklist Items"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="checklist", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *     @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *     @OA\Response(response=200, description="Item retrieved"),
+     *     @OA\Response(response=404, description="Not found")
+     * )
+     */
     public function show(Checklist $checklist, Checklist_item $item)
     {
         try {
@@ -99,7 +143,24 @@ class ChecklistItemController extends Controller
         }
     }
 
-    // Update an existing checklist item
+    /**
+     * @OA\Put(
+     *     path="/api/checklists/{checklist}/items/{item}",
+     *     summary="Update checklist item",
+     *     tags={"Checklist Items"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="checklist", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *     @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="is_completed", type="boolean")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Item updated"),
+     *     @OA\Response(response=404, description="Not found")
+     * )
+     */
     public function update(Request $request, Checklist $checklist, Checklist_item $item)
     {
         try {
@@ -135,8 +196,19 @@ class ChecklistItemController extends Controller
         }
     }
 
-    // Delete a checklist item
-    public function destroy(Request $request, Checklist $checklist, Checklist_item $item)
+    /**
+     * @OA\Delete(
+     *     path="/api/checklists/{checklist}/items/{item}",
+     *     summary="Delete checklist item",
+     *     tags={"Checklist Items"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="checklist", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *     @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string", format="uuid")),
+     *     @OA\Response(response=200, description="Item deleted"),
+     *     @OA\Response(response=404, description="Not found")
+     * )
+     */
+    public function destroy(Checklist $checklist, Checklist_item $item)
     {
         try {
             // Authenticate user with JWT token

@@ -12,7 +12,22 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class CardAttachmentController extends Controller
 {
-    // Retrieve all attachments for a card
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/attachments",
+     *     summary="Get all attachments for a card",
+     *     tags={"Card Attachments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Attachments retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
+     */
     public function index(Card $card)
     {
         try {
@@ -37,7 +52,34 @@ class CardAttachmentController extends Controller
         }
     }
 
-    // Create a new attachment for a card
+    /**
+     * @OA\Post(
+     *     path="/api/cards/{card}/attachments",
+     *     summary="Create a new attachment or upload a file for a card",
+     *     tags={"Card Attachments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"file"},
+     *                 @OA\Property(property="file", type="string", format="binary", description="File to upload (jpg, png, pdf, docx)"),
+     *                 @OA\Property(property="name", type="string", description="Optional custom name for the attachment")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Attachment created/uploaded"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=400, description="Invalid input")
+     * )
+     */
     public function store(Request $request, Card $card)
     {
         try {
@@ -77,7 +119,28 @@ class CardAttachmentController extends Controller
         }
     }
 
-    // Retrieve a specific attachment by ID
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/attachments/{attachment}",
+     *     summary="Get a specific attachment for a card",
+     *     tags={"Card Attachments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="attachment", in="path", required=true,
+     *         description="Attachment UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Attachment retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Attachment not found")
+     * )
+     */
     public function show(Card $card, Attachment $attachment)
     {
         try {
@@ -104,7 +167,34 @@ class CardAttachmentController extends Controller
         }
     }
 
-    // Update an existing attachment
+    /**
+     * @OA\Put(
+     *     path="/api/cards/{card}/attachments/{attachment}",
+     *     summary="Update an existing attachment",
+     *     tags={"Card Attachments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="attachment", in="path", required=true,
+     *         description="Attachment UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", description="New attachment name")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Attachment updated"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Attachment not found")
+     * )
+     */
     public function update(Request $request, Card $card, Attachment $attachment)
     {
         try {
@@ -137,8 +227,29 @@ class CardAttachmentController extends Controller
         }
     }
 
-    // Delete an attachment
-    public function destroy(Request $request, Card $card, Attachment $attachment)
+    /**
+     * @OA\Delete(
+     *     path="/api/cards/{card}/attachments/{attachment}",
+     *     summary="Delete an attachment from a card",
+     *     tags={"Card Attachments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="attachment", in="path", required=true,
+     *         description="Attachment UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Attachment deleted"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Attachment not found")
+     * )
+     */
+    public function destroy(Card $card, Attachment $attachment)
     {
         try {
             // Authenticate user with JWT token
@@ -167,46 +278,6 @@ class CardAttachmentController extends Controller
             return ApiResponse::error('Token expired', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
             return ApiResponse::error('Could not delete attachment', 400);
-        }
-    }
-
-    // Upload a file as an attachment
-    public function upload(Request $request, Card $card)
-    {
-        try {
-            // Authenticate user with JWT token
-            $user = JWTAuth::parseToken()->authenticate();
-
-            // Check if user is admin or belongs to the card's board/workspace
-            if ($user->role !== 'admin' && !$user->boards()->where('boards.id', $card->list->board_id)->exists() && !$user->workspaces()->where('workspaces.id', $card->list->board->workspace_id)->exists()) {
-                return ApiResponse::error('Unauthorized access to card', 403);
-            }
-
-            // Validate request data
-            $validatedData = $request->validate([
-                'file' => 'required|file|mimes:jpg,png,pdf,docx|max:2048',
-                'name' => 'sometimes|string|max:255',
-            ]);
-
-            // Store the file
-            $path = $request->file('file')->store('attachments', 'public');
-
-            // Create new attachment
-            $attachment = Attachment::create([
-                'id' => Str::uuid()->toString(),
-                'card_id' => $card->id,
-                'name' => $validatedData['name'] ?? $request->file('file')->getClientOriginalName(),
-                'path' => $path,
-                'mime_type' => $request->file('file')->getMimeType(),
-            ]);
-
-            return ApiResponse::success(['attachment' => $attachment], 'File uploaded successfully', 201);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return ApiResponse::error('Invalid token', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return ApiResponse::error('Token expired', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
-            return ApiResponse::error('Could not upload file', 400);
         }
     }
 }

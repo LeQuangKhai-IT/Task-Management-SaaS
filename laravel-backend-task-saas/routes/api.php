@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BoarActivityController;
+use App\Http\Controllers\BoardActivityController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardLabelController;
 use App\Http\Controllers\BoardUserController;
@@ -108,7 +108,7 @@ Route::prefix('boards/{board}')->name('boards.')->group(function () {
     Route::apiResource('labels', BoardLabelController::class);
 
     //Activities (read-only)
-    Route::get('activities', [BoarActivityController::class, 'index'])->name('activities.index');
+    Route::get('activities', [BoardActivityController::class, 'index'])->name('activities.index');
 });
 
 

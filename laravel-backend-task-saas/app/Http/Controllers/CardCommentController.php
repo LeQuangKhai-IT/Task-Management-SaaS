@@ -11,7 +11,22 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class CardCommentController extends Controller
 {
-    // Retrieve all comments for a card
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/comments",
+     *     summary="Get all comments for a card",
+     *     tags={"Card Comments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Comments retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
+     */
     public function index(Card $card)
     {
         try {
@@ -36,7 +51,30 @@ class CardCommentController extends Controller
         }
     }
 
-    // Create a new comment for a card
+    /**
+     * @OA\Post(
+     *     path="/api/cards/{card}/comments",
+     *     summary="Create a comment for a card",
+     *     tags={"Card Comments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"content"},
+     *             @OA\Property(property="content", type="string", description="Comment content")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Comment created"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=400, description="Invalid input")
+     * )
+     */
     public function store(Request $request, Card $card)
     {
         try {
@@ -69,7 +107,28 @@ class CardCommentController extends Controller
         }
     }
 
-    // Retrieve a specific comment by ID
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/comments/{comment}",
+     *     summary="Get a specific comment for a card",
+     *     tags={"Card Comments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="comment", in="path", required=true,
+     *         description="Comment UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Comment retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Comment not found")
+     * )
+     */
     public function show(Card $card, Comment $comment)
     {
         try {
@@ -96,7 +155,28 @@ class CardCommentController extends Controller
         }
     }
 
-    // Delete a comment
+    /**
+     * @OA\Delete(
+     *     path="/api/cards/{card}/comments/{comment}",
+     *     summary="Delete a comment from a card",
+     *     tags={"Card Comments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="comment", in="path", required=true,
+     *         description="Comment UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Comment deleted"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Comment not found")
+     * )
+     */
     public function destroy(Request $request, Card $card, Comment $comment)
     {
         try {

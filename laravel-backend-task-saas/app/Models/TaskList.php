@@ -9,6 +9,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @OA\Schema(
+ *     schema="TaskList",
+ *     type="object",
+ *     @OA\Property(property="id", type="string", format="uuid"),
+ *     @OA\Property(property="board_id", type="string", format="uuid"),
+ *     @OA\Property(property="title", type="string"),
+ *     @OA\Property(property="position", type="number", format="double", default=0.0),
+ *     @OA\Property(property="is_archived", type="boolean", default=false),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true)
+ * )
+ */
 class TaskList extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
@@ -47,9 +61,9 @@ class TaskList extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'title',
         'position',
-        'archived',
+        'is_archived',
     ];
 
     /**

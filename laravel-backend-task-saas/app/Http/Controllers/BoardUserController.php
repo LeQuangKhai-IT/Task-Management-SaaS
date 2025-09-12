@@ -11,7 +11,22 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 class BoardUserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/boards/{board}/users",
+     *     summary="Get all users in a board",
+     *     tags={"Board Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Users retrieved successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
      */
     public function index(Board $board)
     {
@@ -37,8 +52,32 @@ class BoardUserController extends Controller
             return ApiResponse::error('Could not retrieve users', 400);
         }
     }
+
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/boards/{board}/users",
+     *     summary="Add a user to a board",
+     *     tags={"Board Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"user_id"},
+     *             @OA\Property(property="user_id", type="string", format="uuid", description="UUID of the user to add")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="User added successfully"),
+     *     @OA\Response(response=400, description="User already in board or invalid input"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
      */
     public function store(Request $request, Board $board)
     {
@@ -73,6 +112,33 @@ class BoardUserController extends Controller
         }
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/boards/{board}/users/{user}",
+     *     summary="Remove a user from a board",
+     *     tags={"Board Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="user",
+     *         in="path",
+     *         required=true,
+     *         description="User UUID to remove",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="User removed successfully"),
+     *     @OA\Response(response=400, description="Cannot remove yourself"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="User not found in board")
+     * )
+     */
     public function destroy(Board $board, User $user)
     {
         try {

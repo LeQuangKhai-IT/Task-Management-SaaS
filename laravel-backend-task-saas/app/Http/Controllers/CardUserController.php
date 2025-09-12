@@ -10,7 +10,20 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class CardUserController extends Controller
 {
-    // Retrieve all users assigned to a card
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/users",
+     *     summary="Get all users assigned to a card",
+     *     tags={"Card Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Users retrieved"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function index(Card $card)
     {
         try {
@@ -35,7 +48,28 @@ class CardUserController extends Controller
         }
     }
 
-    // Assign a user to a card
+    /**
+     * @OA\Post(
+     *     path="/api/cards/{card}/users",
+     *     summary="Assign a user to a card",
+     *     tags={"Card Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"user_id"},
+     *             @OA\Property(property="user_id", type="string", format="uuid")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="User assigned"),
+     *     @OA\Response(response=400, description="Already assigned or invalid data"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function store(Request $request, Card $card)
     {
         try {
@@ -68,7 +102,25 @@ class CardUserController extends Controller
         }
     }
 
-    // Unassign a user from a card
+    /**
+     * @OA\Delete(
+     *     path="/api/cards/{card}/users/{user}",
+     *     summary="Unassign a user from a card",
+     *     tags={"Card Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="user", in="path", required=true,
+     *         description="User ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="User unassigned"),
+     *     @OA\Response(response=404, description="User not found in card"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
+     */
     public function destroy(Card $card, User $user)
     {
         try {

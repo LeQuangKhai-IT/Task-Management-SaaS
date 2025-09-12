@@ -24,8 +24,10 @@ class UpdateBoardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
+            'title' => 'sometimes|string|max:255',
             'description' => 'nullable|string|max:1000',
+            'workspace_id' => 'sometimes|string|uuid',
+            'background' => 'nullable|string|max:255',
             'visibility' => 'sometimes|in:public,private,workspace',
         ];
     }
@@ -38,11 +40,17 @@ class UpdateBoardRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.string' => 'The board name must be a string.',
-            'name.max' => 'The board name may not be greater than 255 characters.',
+            'title.string' => 'The board title must be a string.',
+            'title.max' => 'The board title may not be greater than 255 characters.',
 
             'description.string' => 'The description must be a string.',
             'description.max' => 'The description may not be greater than 1000 characters.',
+
+            'workspace_id.string' =>  'The workspace_id must be a string.',
+            'workspace_id.uuid' =>  'The workspace_id must be a uuid format.',
+
+            'background.string' => 'The board background must be a string.',
+            'background.max' => 'The board background may not be greater than 255 characters.',
 
             'visibility.in' => 'The visibility must be one of: public, private, workspace.',
         ];

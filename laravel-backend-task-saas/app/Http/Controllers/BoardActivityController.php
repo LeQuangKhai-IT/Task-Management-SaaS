@@ -6,10 +6,26 @@ use App\Helpers\ApiResponse;
 use App\Models\Board;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
-class BoarActivityController extends Controller
+class BoardActivityController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/boards/{board}/activities",
+     *     summary="Get all activities of a board",
+     *     tags={"Boards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Activities retrieved successfully"),
+     *     @OA\Response(response=403, description="Unauthorized"),
+     *     @OA\Response(response=401, description="Invalid or expired token"),
+     *     @OA\Response(response=400, description="Could not retrieve activities")
+     * )
      */
     public function index(Board $board)
     {
@@ -23,7 +39,7 @@ class BoarActivityController extends Controller
             }
 
             // Get all activities with associated user data
-            $activities = $board->activities()->with('user')->get();
+            $activities = $board->activities()->with('user')->paginate(20);
 
             return ApiResponse::success(['activities' => $activities], 'Activities retrieved successfully', 200);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {

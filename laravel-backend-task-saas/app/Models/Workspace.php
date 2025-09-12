@@ -10,6 +10,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @OA\Schema(
+ *     schema="Workspace",
+ *     type="object",
+ *     @OA\Property(property="id", type="string", format="uuid"),
+ *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="description", type="string"),
+ *     @OA\Property(property="owner_id", type="string", format="uuid"),
+ *     @OA\Property(property="visibility", type="string", enum={"public","private"}),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
+ * )
+ */
 class Workspace extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;

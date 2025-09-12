@@ -11,7 +11,18 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 class WorkspaceUserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/workspaces/{workspace}/users",
+     *     summary="List users in workspace",
+     *     tags={"Workspace Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="workspace", in="path", required=true,
+     *         description="Workspace ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="List of users"),
+     *     @OA\Response(response=403, description="Unauthorized")
+     * )
      */
     public function index(Workspace $workspace)
     {
@@ -39,7 +50,24 @@ class WorkspaceUserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/workspaces/{workspace}/users",
+     *     summary="Add user to workspace",
+     *     tags={"Workspace Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="workspace", in="path", required=true,
+     *         description="Workspace ID", @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         @OA\JsonContent(
+     *             required={"user_id"},
+     *             @OA\Property(property="user_id", type="string", format="uuid")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="User added"),
+     *     @OA\Response(response=400, description="Validation or already exists")
+     * )
      */
     public function store(Request $request, Workspace $workspace)
     {
@@ -75,7 +103,22 @@ class WorkspaceUserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/workspaces/{workspace}/users/{user}",
+     *     summary="Remove user from workspace",
+     *     tags={"Workspace Users"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="workspace", in="path", required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="user", in="path", required=true,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="User removed"),
+     *     @OA\Response(response=404, description="User not found")
+     * )
      */
     public function destroy(Workspace $workspace, User $user)
     {

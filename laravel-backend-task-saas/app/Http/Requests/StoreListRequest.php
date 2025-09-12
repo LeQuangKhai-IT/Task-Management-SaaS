@@ -24,10 +24,10 @@ class StoreListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'board_id' => 'required|uuid|exists:boards,id',
             'position' => 'nullable|numeric|min:0',
-            'archived' => 'sometimes|boolean',
+            'is_archived' => 'sometimes|boolean',
         ];
     }
 
@@ -39,9 +39,9 @@ class StoreListRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'The list name is required.',
-            'name.string' => 'The list name must be a string.',
-            'name.max' => 'The list name may not be greater than 255 characters.',
+            'title.required' => 'The list title is required.',
+            'title.string' => 'The list title must be a string.',
+            'title.max' => 'The list title may not be greater than 255 characters.',
 
             'board_id.required' => 'The board ID is required.',
             'board_id.uuid' => 'The board ID must be a valid UUID.',
@@ -50,7 +50,7 @@ class StoreListRequest extends FormRequest
             'position.numeric' => 'The position must be an double.',
             'position.min' => 'The position must be at least 0.',
 
-            'archived.boolean' => 'The archived field must be a boolean.',
+            'is_archived.boolean' => 'The is_archived field must be a boolean.',
         ];
     }
 

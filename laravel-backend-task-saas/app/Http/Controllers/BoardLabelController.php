@@ -12,7 +12,22 @@ use Illuminate\Support\Str;
 class BoardLabelController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/boards/{board}/labels",
+     *     summary="Get all labels in a board",
+     *     tags={"Board Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Labels retrieved successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
      */
     public function index(Board $board)
     {
@@ -39,7 +54,31 @@ class BoardLabelController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/boards/{board}/labels",
+     *     summary="Create a new label in a board",
+     *     tags={"Board Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", description="Label name"),
+     *             @OA\Property(property="color", type="string", description="Label color", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Label created successfully"),
+     *     @OA\Response(response=400, description="Validation error"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
      */
     public function store(Request $request, Board $board)
     {
@@ -77,7 +116,30 @@ class BoardLabelController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/boards/{board}/labels/{label}",
+     *     summary="Get a specific label in a board",
+     *     tags={"Board Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="label",
+     *         in="path",
+     *         required=true,
+     *         description="Label UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Label retrieved successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Label not found")
+     * )
      */
     public function show(Board $board, Label $label)
     {
@@ -106,7 +168,37 @@ class BoardLabelController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/boards/{board}/labels/{label}",
+     *     summary="Update a label in a board",
+     *     tags={"Board Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="label",
+     *         in="path",
+     *         required=true,
+     *         description="Label UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", description="Label name"),
+     *             @OA\Property(property="color", type="string", description="Label color", nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Label updated successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Label not found")
+     * )
      */
     public function update(Request $request, Board $board, Label $label)
     {
@@ -144,9 +236,32 @@ class BoardLabelController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/boards/{board}/labels/{label}",
+     *     summary="Delete a label from a board",
+     *     tags={"Board Labels"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="board",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="label",
+     *         in="path",
+     *         required=true,
+     *         description="Label UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Label deleted successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Label not found")
+     * )
      */
-    public function destroy(Request $request, Board $board, Label $label)
+    public function destroy(Board $board, Label $label)
     {
         try {
             // Authenticate user with JWT token

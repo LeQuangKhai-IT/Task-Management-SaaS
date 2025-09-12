@@ -13,7 +13,19 @@ use Illuminate\Support\Str;
 class CardController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/cards",
+     *     summary="Get all cards (optional filter by list_id)",
+     *     tags={"Cards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="list_id", in="query", required=false,
+     *         description="Filter cards by list UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Cards retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized")
+     * )
      */
     public function index(Request $request)
     {
@@ -46,7 +58,26 @@ class CardController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/cards",
+     *     summary="Create a new card",
+     *     tags={"Cards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"list_id","name","description","archived"},
+     *             @OA\Property(property="list_id", type="string", format="uuid"),
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="due_date", type="string", format="date-time"),
+     *             @OA\Property(property="archived", type="boolean")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Card created"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=400, description="Invalid input")
+     * )
      */
     public function store(StoreCardRequest $request)
     {
@@ -78,7 +109,20 @@ class CardController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/cards/{id}",
+     *     summary="Get a specific card by ID",
+     *     tags={"Cards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Card retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Card not found")
+     * )
      */
     public function show(string $id)
     {
@@ -105,7 +149,30 @@ class CardController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/cards/{id}",
+     *     summary="Update a specific card",
+     *     tags={"Cards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="list_id", type="string", format="uuid"),
+     *             @OA\Property(property="name", type="string"),
+     *             @OA\Property(property="description", type="string"),
+     *             @OA\Property(property="due_date", type="string", format="date-time"),
+     *             @OA\Property(property="archived", type="boolean")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Card updated"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Card not found")
+     * )
      */
     public function update(UpdateCardRequest $request, string $id)
     {
@@ -136,7 +203,20 @@ class CardController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/cards/{id}",
+     *     summary="Delete a specific card",
+     *     tags={"Cards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Card deleted"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Card not found")
+     * )
      */
     public function destroy(string $id)
     {

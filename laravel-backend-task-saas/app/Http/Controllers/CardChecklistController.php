@@ -11,7 +11,22 @@ use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class CardChecklistController extends Controller
 {
-    // Retrieve all checklists for a card
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/checklists",
+     *     summary="Get all checklists for a card",
+     *     tags={"Card Checklists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Checklists retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden")
+     * )
+     */
     public function index(Card $card)
     {
         try {
@@ -36,7 +51,30 @@ class CardChecklistController extends Controller
         }
     }
 
-    // Create a new checklist for a card
+    /**
+     * @OA\Post(
+     *     path="/api/cards/{card}/checklists",
+     *     summary="Create a new checklist for a card",
+     *     tags={"Card Checklists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", description="Checklist name")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Checklist created"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=400, description="Invalid input")
+     * )
+     */
     public function store(Request $request, Card $card)
     {
         try {
@@ -68,7 +106,28 @@ class CardChecklistController extends Controller
         }
     }
 
-    // Retrieve a specific checklist by ID
+    /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/checklists/{checklist}",
+     *     summary="Get a specific checklist for a card",
+     *     tags={"Card Checklists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="checklist", in="path", required=true,
+     *         description="Checklist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Checklist retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Checklist not found")
+     * )
+     */
     public function show(Card $card, Checklist $checklist)
     {
         try {
@@ -95,7 +154,34 @@ class CardChecklistController extends Controller
         }
     }
 
-    // Update an existing checklist
+    /**
+     * @OA\Put(
+     *     path="/api/cards/{card}/checklists/{checklist}",
+     *     summary="Update an existing checklist",
+     *     tags={"Card Checklists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="checklist", in="path", required=true,
+     *         description="Checklist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", description="Checklist name")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Checklist updated"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Checklist not found")
+     * )
+     */
     public function update(Request $request, Card $card, Checklist $checklist)
     {
         try {
@@ -128,7 +214,28 @@ class CardChecklistController extends Controller
         }
     }
 
-    // Delete a checklist
+    /**
+     * @OA\Delete(
+     *     path="/api/cards/{card}/checklists/{checklist}",
+     *     summary="Delete a checklist from a card",
+     *     tags={"Card Checklists"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="checklist", in="path", required=true,
+     *         description="Checklist UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Checklist deleted"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Checklist not found")
+     * )
+     */
     public function destroy(Card $card, Checklist $checklist)
     {
         try {

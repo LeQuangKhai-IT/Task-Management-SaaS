@@ -24,9 +24,10 @@ class StoreBoardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'workspace_id' => 'required|uuid|exists:workspaces,id',
+            'background' => 'nullable|string|max:255',
             'visibility' => 'sometimes|in:public,private,workspace',
         ];
     }
@@ -39,9 +40,9 @@ class StoreBoardRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'The board name is required.',
-            'name.string' => 'The board name must be a string.',
-            'name.max' => 'The board name may not be greater than 255 characters.',
+            'title.required' => 'The board title is required.',
+            'title.string' => 'The board title must be a string.',
+            'title.max' => 'The board title may not be greater than 255 characters.',
 
             'description.string' => 'The description must be a string.',
             'description.max' => 'The description may not be greater than 1000 characters.',
@@ -51,6 +52,9 @@ class StoreBoardRequest extends FormRequest
             'workspace_id.exists' => 'The specified workspace does not exist.',
 
             'visibility.in' => 'The visibility must be one of: public, private, workspace.',
+
+            'background.string' => 'The board background must be a string.',
+            'background.max' => 'The board background may not be greater than 255 characters.',
         ];
     }
 

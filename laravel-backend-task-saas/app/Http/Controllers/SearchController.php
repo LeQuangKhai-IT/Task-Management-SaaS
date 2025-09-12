@@ -10,6 +10,23 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/search",
+     *     summary="Search resources",
+     *     tags={"Search"},
+     *     @OA\Parameter(
+     *         name="query", in="query", required=true,
+     *         @OA\Schema(type="string"), description="Keyword to search"
+     *     ),
+     *     @OA\Parameter(
+     *         name="type", in="query", required=false,
+     *         @OA\Schema(type="string", enum={"board","card","user","workspace"}),
+     *         description="Filter by resource type"
+     *     ),
+     *     @OA\Response(response=200, description="Search results (array or object depending on type)")
+     * )
+     */
     public function index(Request $request)
     {
         $query = $request->input('query');

@@ -10,6 +10,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+/**
+ * @OA\Schema(
+ *     schema="Board",
+ *     type="object",
+ *     @OA\Property(property="id", type="string", format="uuid"),
+ *     @OA\Property(property="title", type="string"),
+ *     @OA\Property(property="description", type="string", nullable=true),
+ *     @OA\Property(property="workspace_id", type="string", format="uuid"),
+ *     @OA\Property(property="background", type="string", nullable=true),
+ *     @OA\Property(property="visibility", type="string", enum={"private","workspace","public"}, default="private"),
+ *     @OA\Property(property="is_archived", type="boolean", default=false),
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true)
+ * )
+ */
 class Board extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
@@ -27,10 +43,12 @@ class Board extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
+        'workspace_id',
         'background',
-        'visibility'
+        'visibility',
+        'is_archived',
     ];
 
     /**

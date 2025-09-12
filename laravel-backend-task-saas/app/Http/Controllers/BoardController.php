@@ -13,7 +13,22 @@ use Illuminate\Support\Str;
 class BoardController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/boards",
+     *     summary="Get all boards (optionally filtered by workspace)",
+     *     tags={"Boards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="workspace_id",
+     *         in="query",
+     *         description="Filter boards by workspace UUID",
+     *         required=false,
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Boards retrieved successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=400, description="Could not retrieve boards")
+     * )
      */
     public function index(Request $request)
     {
@@ -46,7 +61,26 @@ class BoardController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/boards",
+     *     summary="Create a new board",
+     *     tags={"Boards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"workspace_id","title","description","visibility"},
+     *             @OA\Property(property="title", type="string", maxLength=255, description="Board title"),
+     *             @OA\Property(property="description", type="string", description="Board description"),
+     *             @OA\Property(property="workspace_id", type="string", format="uuid", description="Workspace UUID"),
+     *             @OA\Property(property="background", type="string", maxLength=255, description="Background code color or url"),
+     *             @OA\Property(property="visibility", type="string", enum={"private","workspace","public"}, description="Board visibility")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Board created successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=400, description="Could not create board")
+     * )
      */
     public function store(StoreBoardRequest $request)
     {
@@ -54,13 +88,13 @@ class BoardController extends Controller
             // Authenticate user with JWT token
             JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->validate();
+            $validatedData = $request->only('title', 'description', 'workspace_id',  'visibility');
 
             $board = Board::create([
                 'id' => Str::uuid()->toString(),
-                'workspace_id' => $validatedData['workspace_id'],
-                'name' => $validatedData['name'],
+                'title' => $validatedData['title'],
                 'description' => $validatedData['description'],
+                'workspace_id' => $validatedData['workspace_id'],
                 'visibility' => $validatedData['visibility']
             ]);
 
@@ -77,7 +111,23 @@ class BoardController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/boards/{id}",
+     *     summary="Get a specific board by ID",
+     *     tags={"Boards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Board retrieved successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Board not found"),
+     *     @OA\Response(response=400, description="Could not retrieve board")
+     * )
      */
     public function show(string $id)
     {
@@ -104,7 +154,33 @@ class BoardController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/boards/{id}",
+     *     summary="Update a board by ID",
+     *     tags={"Boards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="title", type="string", maxLength=255, description="Board title"),
+     *             @OA\Property(property="description", type="string", description="Board description"),
+     *             @OA\Property(property="workspace_id", type="string", format="uuid", description="Workspace UUID"),
+     *             @OA\Property(property="background", type="string", maxLength=255, description="Background code color or url"),
+     *             @OA\Property(property="visibility", type="string", enum={"private","workspace","public"}, description="Board visibility")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Board updated successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Board not found"),
+     *     @OA\Response(response=400, description="Could not update board")
+     * )
      */
     public function update(UpdateBoardRequest $request, string $id)
     {
@@ -118,7 +194,7 @@ class BoardController extends Controller
                 return ApiResponse::error('Board not found', 404);
             }
 
-            $validatedData = $request->validate();
+            $validatedData = $request->only('title', 'description', 'workspace_id', 'background', 'visibility');
 
             $board->update($validatedData);
 
@@ -135,7 +211,23 @@ class BoardController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/boards/{id}",
+     *     summary="Delete a board by ID",
+     *     tags={"Boards"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Board UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Board deleted successfully"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=404, description="Board not found"),
+     *     @OA\Response(response=400, description="Could not delete board")
+     * )
      */
     public function destroy(string $id)
     {
