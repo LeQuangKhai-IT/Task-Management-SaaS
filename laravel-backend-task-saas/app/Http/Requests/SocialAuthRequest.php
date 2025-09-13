@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreListRequest extends FormRequest
+class SocialAuthRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,35 +24,32 @@ class StoreListRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'board_id' => 'required|uuid|exists:boards,id',
-            'position' => 'nullable|numeric|min:0',
+            'provider' => 'required|string|in:google,github,slack',
+            'token' => 'required|string',
         ];
     }
 
     /**
      * Customize the error messages.
      *
-     * @return array
+     * @return array<string, string>
      */
-    public function messages()
+    public function messages(): array
     {
         return [
-            'title.required' => 'The list title is required.',
-            'title.string' => 'The list title must be a string.',
-            'title.max' => 'The list title may not be greater than 255 characters.',
+            'provider.required' => 'The provider field is required.',
+            'provider.string'   => 'The provider must be a string.',
+            'provider.in'       => 'The provider must be one of: google, github, or slack.',
 
-            'board_id.required' => 'The board ID is required.',
-            'board_id.uuid' => 'The board ID must be a valid UUID.',
-            'board_id.exists' => 'The specified board does not exist.',
-
-            'position.numeric' => 'The position must be an double.',
-            'position.min' => 'The position must be at least 0.',
+            'token.required'    => 'The token field is required.',
+            'token.string'      => 'The token must be a valid string.',
         ];
     }
 
     /**
-     * Response with json
+     * Handle a failed validation attempt.
+     *
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
     protected function failedValidation(Validator $validator)
     {

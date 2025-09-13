@@ -19,7 +19,6 @@ return new class extends Migration
             $table->timestamp('due_date')->nullable();
             $table->double('position', 15, 8)->default(0.0);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

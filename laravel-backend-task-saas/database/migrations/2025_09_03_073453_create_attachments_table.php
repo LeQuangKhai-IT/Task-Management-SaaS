@@ -23,7 +23,6 @@ return new class extends Migration
             $table->unsignedBigInteger('file_size')->nullable();
             $table->foreignUuid('uploaded_by')->constrained('users')->nullOnDelete();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

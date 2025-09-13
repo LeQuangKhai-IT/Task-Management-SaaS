@@ -34,19 +34,19 @@ class SearchController extends Controller
 
         switch ($type) {
             case 'board':
-                return Board::where('name', 'like', "%$query%")->get();
+                return Board::where('title', 'like', "%$query%")->get();
             case 'card':
-                return Card::where('name', 'like', "%$query%")->get();
+                return Card::where('title', 'like', "%$query%")->get();
             case 'user':
-                return User::where('name', 'like', "%$query%")->get();
+                return User::where('fullname', 'like', "%$query%")->get();
             case 'workspace':
                 return Workspace::where('name', 'like', "%$query%")->get();
             default:
                 // search all
                 return [
-                    'boards' => Board::where('name', 'like', "%$query%")->get(),
-                    'cards' => Card::where('name', 'like', "%$query%")->get(),
-                    'users' => User::where('name', 'like', "%$query%")->get(),
+                    'boards' => Board::where('title', 'like', "%$query%")->get(),
+                    'cards' => Card::where('title', 'like', "%$query%")->get(),
+                    'users' => User::where('fullname', 'like', "%$query%")->get(),
                     'workspaces' => Workspace::where('name', 'like', "%$query%")->get(),
                 ];
         }

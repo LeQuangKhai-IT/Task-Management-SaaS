@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations. OK
      */
     public function up(): void
     {
@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignUuid('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('visibility', ['private', 'public'])->default('private');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('type', 50);
             $table->jsonb('data');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

@@ -53,6 +53,54 @@ class CardAttachmentController extends Controller
     }
 
     /**
+     * @OA\Get(
+     *     path="/api/cards/{card}/attachments/{attachment}",
+     *     summary="Get a specific attachment for a card",
+     *     tags={"Card Attachments"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="card", in="path", required=true,
+     *         description="Card UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Parameter(
+     *         name="attachment", in="path", required=true,
+     *         description="Attachment UUID",
+     *         @OA\Schema(type="string", format="uuid")
+     *     ),
+     *     @OA\Response(response=200, description="Attachment retrieved"),
+     *     @OA\Response(response=401, description="Unauthorized"),
+     *     @OA\Response(response=403, description="Forbidden"),
+     *     @OA\Response(response=404, description="Attachment not found")
+     * )
+     */
+    public function show(Card $card, Attachment $attachment)
+    {
+        try {
+            // Authenticate user with JWT token
+            $user = JWTAuth::parseToken()->authenticate();
+
+            // Check if attachment belongs to the card
+            if ($attachment->card_id !== $card->id) {
+                return ApiResponse::error('Attachment not found in card', 404);
+            }
+
+            // Check if user is admin or belongs to the card's board/workspace
+            if ($user->role !== 'admin' && !$user->boards()->where('boards.id', $card->list->board_id)->exists() && !$user->workspaces()->where('workspaces.id', $card->list->board->workspace_id)->exists()) {
+                return ApiResponse::error('Unauthorized access to card', 403);
+            }
+
+            return ApiResponse::success(['attachment' => $attachment], 'Attachment retrieved successfully', 200);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return ApiResponse::error('Invalid token', 401);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return ApiResponse::error('Token expired', 401);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
+            return ApiResponse::error('Could not retrieve attachment', 400);
+        }
+    }
+
+    /**
      * @OA\Post(
      *     path="/api/cards/{card}/attachments",
      *     summary="Create a new attachment or upload a file for a card",
@@ -116,54 +164,6 @@ class CardAttachmentController extends Controller
             return ApiResponse::error('Token expired', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
             return ApiResponse::error('Could not create attachment', 400);
-        }
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/cards/{card}/attachments/{attachment}",
-     *     summary="Get a specific attachment for a card",
-     *     tags={"Card Attachments"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="card", in="path", required=true,
-     *         description="Card UUID",
-     *         @OA\Schema(type="string", format="uuid")
-     *     ),
-     *     @OA\Parameter(
-     *         name="attachment", in="path", required=true,
-     *         description="Attachment UUID",
-     *         @OA\Schema(type="string", format="uuid")
-     *     ),
-     *     @OA\Response(response=200, description="Attachment retrieved"),
-     *     @OA\Response(response=401, description="Unauthorized"),
-     *     @OA\Response(response=403, description="Forbidden"),
-     *     @OA\Response(response=404, description="Attachment not found")
-     * )
-     */
-    public function show(Card $card, Attachment $attachment)
-    {
-        try {
-            // Authenticate user with JWT token
-            $user = JWTAuth::parseToken()->authenticate();
-
-            // Check if attachment belongs to the card
-            if ($attachment->card_id !== $card->id) {
-                return ApiResponse::error('Attachment not found in card', 404);
-            }
-
-            // Check if user is admin or belongs to the card's board/workspace
-            if ($user->role !== 'admin' && !$user->boards()->where('boards.id', $card->list->board_id)->exists() && !$user->workspaces()->where('workspaces.id', $card->list->board->workspace_id)->exists()) {
-                return ApiResponse::error('Unauthorized access to card', 403);
-            }
-
-            return ApiResponse::success(['attachment' => $attachment], 'Attachment retrieved successfully', 200);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return ApiResponse::error('Invalid token', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return ApiResponse::error('Token expired', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
-            return ApiResponse::error('Could not retrieve attachment', 400);
         }
     }
 

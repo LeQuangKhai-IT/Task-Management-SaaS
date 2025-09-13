@@ -34,56 +34,60 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('check-email', 'checkEmail')->name('email.check');
     Route::post('send-verify-email', 'checkEmail')->name('email.check');
     Route::get('verify-email', 'verifyEmail')->name('email.verify');
-    Route::post('verify-complete', 'complete')->name('email.verify.complete');
     Route::post('resend-verify-email', 'resendVerifyEmail')->name('email.verify.resend');
+    Route::post('verify-complete', 'complete')->name('email.verify.complete');
     // Need check token
     Route::middleware('jwt.auth')->group(function () {
         Route::post('logout', 'logout')->name('logout');
         Route::post('refresh', 'refresh')->name('refresh');
         Route::post('change-password', 'changePassword')->name('password.change');
-        Route::get('me', 'me')->name('me');
     });
 });
 
 
 /******************* USER ROUTES *******************/
 Route::apiResource('users', UserController::class)
-    ->middlewareFor(
-        ['index', 'show', 'store', 'update', 'destroy'],
-        ['auth:api']
-    );
+    // ->middlewareFor(
+    //     ['index', 'show', 'store', 'update', 'destroy'],
+    //     ['jwt.auth']
+    // )
+;
 
 
 /******************* WORKSPACE ROUTES *******************/
 Route::apiResource('workspaces', WorkspaceController::class)
-    ->middlewareFor(
-        ['index', 'show', 'store', 'update', 'destroy'],
-        ['auth:api']
-    );
+    // ->middlewareFor(
+    //     ['index', 'show', 'store', 'update', 'destroy'],
+    //     ['jwt.auth']
+    // )
+;
 
 
 /******************* BOARD ROUTES *******************/
 Route::apiResource('boards', BoardController::class)
-    ->middlewareFor(
-        ['index', 'show', 'store', 'update', 'destroy'],
-        ['auth:api']
-    );
+    // ->middlewareFor(
+    //     ['index', 'show', 'store', 'update', 'destroy'],
+    //     ['jwt.auth']
+    // )
+;
 
 
 /******************* LIST ROUTES *******************/
 Route::apiResource('lists', ListController::class)
-    ->middlewareFor(
-        ['index', 'show', 'store', 'update', 'destroy'],
-        ['auth:api']
-    );
+    // ->middlewareFor(
+    //     ['index', 'show', 'store', 'update', 'destroy'],
+    //     ['jwt.auth']
+    // )
+;
 
 
 /******************* CARD ROUTES *******************/
 Route::apiResource('cards', CardController::class)
-    ->middlewareFor(
-        ['index', 'show', 'store', 'update', 'destroy'],
-        ['auth:api']
-    );
+    // ->middlewareFor(
+    //     ['index', 'show', 'store', 'update', 'destroy'],
+    //     ['jwt.auth']
+    // )
+;
 
 
 /******************* WORKSPACE USER *******************/
@@ -134,11 +138,6 @@ Route::prefix('cards/{card}')->group(function () {
     // Attachments
     Route::apiResource('attachments', CardAttachmentController::class);
 
-    //Upload file 
-    Route::post('attachments', [CardAttachmentController::class, 'upload'])
-        ->middleware('auth:api')
-        ->name('cards.attachments.upload');
-
     //Comments
     Route::apiResource('comments', CardCommentController::class)->except('update');
 });
@@ -156,11 +155,7 @@ Route::get('/search', [SearchController::class, 'index'])
     ->name('search.global');
 
 /******************* SOCIAL AUTH *******************/
-Route::controller(SocialAuthController::class)->group(function () {
-    Route::get('{provider}/redirect', 'redirect');
-    Route::get('{provider}/callback', 'callback');
-});
-
+Route::post('social-login', [SocialAuthController::class]);
 
 /******************* FALLBACK *******************/
 Route::fallback(FallbackController::class);

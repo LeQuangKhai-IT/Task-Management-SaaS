@@ -39,71 +39,19 @@ class WorkspaceController extends Controller
     {
         try {
             // Authenticate user with JWT token
-            JWTAuth::parseToken()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
 
-            $workspaces = Workspace::all();
+            $workspaces = Workspace::where('owner_id', $user->id)->get();
 
             return ApiResponse::success([
                 'workspaces' => $workspaces,
-            ], 'Workspaces retrieved successfully', 200);
+            ], 'Workspaces retrieved successfully.', 200);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
             return ApiResponse::error('Invalid token', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
             return ApiResponse::error('Token expired', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
             return ApiResponse::error('Could not retrieve workspaces', 400);
-        }
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/workspaces",
-     *     summary="Create a new workspace",
-     *     tags={"Workspaces"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/Workspace")
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Workspace created successfully",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="success", type="boolean"),
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="data", type="object",
-     *                 @OA\Property(property="workspace", ref="#/components/schemas/Workspace")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=400, description="Validation error")
-     * )
-     */
-    public function store(StoreWorkspaceRequest $request)
-    {
-        try {
-            // Authenticate user with JWT token
-            JWTAuth::parseToken()->authenticate();
-
-            $validatedData = $request->only('name', 'description', 'visibility');
-
-            $workspace = Workspace::create([
-                'id' => Str::uuid()->toString(),
-                'name' => $validatedData['name'],
-                'description' => $validatedData['description'],
-                'visibility' => $validatedData['visibility']
-            ]);
-
-            return ApiResponse::success([
-                'workspace' => $workspace,
-            ], 'Workspace created successfully', 201);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return ApiResponse::error('Invalid token', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return ApiResponse::error('Token expired', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
-            return ApiResponse::error('Could not create workspace', 400);
         }
     }
 
@@ -150,13 +98,66 @@ class WorkspaceController extends Controller
 
             return ApiResponse::success([
                 'workspace' => $workspace,
-            ], 'Workspace retrieved successfully', 200);
+            ], 'Workspace retrieved successfully.', 200);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
             return ApiResponse::error('Invalid token', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
             return ApiResponse::error('Token expired', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
             return ApiResponse::error('Could not retrieve workspace', 400);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/workspaces",
+     *     summary="Create a new workspace",
+     *     tags={"Workspaces"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/Workspace")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Workspace created successfully",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="success", type="boolean"),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="object",
+     *                 @OA\Property(property="workspace", ref="#/components/schemas/Workspace")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=400, description="Validation error")
+     * )
+     */
+    public function store(StoreWorkspaceRequest $request)
+    {
+        try {
+            // Authenticate user with JWT token
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $validatedData = $request->only('name', 'description', 'visibility');
+
+            $workspace = Workspace::create([
+                'id' => Str::uuid()->toString(),
+                'name' => $validatedData['name'],
+                'description' => $validatedData['description'],
+                'owner_id' => $user->id,
+                'visibility' => $validatedData['visibility']
+            ]);
+
+            return ApiResponse::success([
+                'workspace' => $workspace,
+            ], 'Workspace created successfully.', 201);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return ApiResponse::error('Invalid token', 401);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return ApiResponse::error('Token expired', 401);
+        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
+            return ApiResponse::error('Could not create workspace', 400);
         }
     }
 
@@ -211,7 +212,7 @@ class WorkspaceController extends Controller
 
             return ApiResponse::success([
                 'workspace' => $workspace,
-            ], 'Workspace updated successfully', 200);
+            ], 'Workspace updated successfully.', 200);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
             return ApiResponse::error('Invalid token', 401);
         } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -248,7 +249,7 @@ class WorkspaceController extends Controller
             $workspace = Workspace::find($id);
 
             if (!$workspace) {
-                return ApiResponse::error('Workspace not found', 404);
+                return ApiResponse::error('Workspace not found.', 404);
             }
 
             $workspace->delete();

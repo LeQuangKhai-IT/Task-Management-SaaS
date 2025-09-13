@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\ApiResponse;
 use App\Http\Requests\StoreListRequest;
 use App\Http\Requests\UpdateListRequest;
+use App\Models\Board;
 use App\Models\TaskList;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -77,11 +78,20 @@ class ListController extends Controller
     {
         try {
             // Authenticate user with JWT token
-            JWTAuth::parseToken()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->only('title', 'position', 'is_archived');
+            $validatedData = $request->only('title', 'board_id', 'position');
 
-            $list = TaskList::create([
+            $board = Board::where('id', $validatedData['board_id'])
+                ->whereHas('workspace', function ($query) use ($user) {
+                    $query->where('owner_id', $user->id);
+                })->first();
+
+            if (! $board) {
+                return ApiResponse::error('Board not found or unauthorized.', 404);
+            }
+
+            $list = $board->lists()->create([
                 'id' => Str::uuid()->toString(),
                 'board_id' => $validatedData['board_id'],
                 'title' => $validatedData['title'],
@@ -163,15 +173,18 @@ class ListController extends Controller
     {
         try {
             // Authenticate user with JWT token
-            JWTAuth::parseToken()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
 
-            $list = TaskList::find($id);
+            $validatedData = $request->only('title', 'board_id', 'position', 'is_archived');
 
-            if (!$list) {
-                return ApiResponse::error('List not found', 404);
+            $list = TaskList::where('id', $id)
+                ->whereHas('board.workspace', function ($query) use ($user) {
+                    $query->where('owner_id', $user->id);
+                })->first();
+
+            if (! $list) {
+                return ApiResponse::error('List not found or unauthorized.', 404);
             }
-
-            $validatedData = $request->only('title', 'position', 'is_archived');
 
             $list->update($validatedData);
 

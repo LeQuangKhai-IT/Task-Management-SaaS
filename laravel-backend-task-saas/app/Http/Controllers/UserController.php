@@ -37,7 +37,7 @@ class UserController extends Controller
     {
         try {
             // Check token and get authenticated user
-            JWTAuth::parseToken()->authenticate();
+            //JWTAuth::parseToken()->authenticate();
 
             $users = User::all();
 
@@ -190,7 +190,7 @@ class UserController extends Controller
     {
         try {
             // Check token and get authenticated user
-            JWTAuth::parseToken()->authenticate();
+            //JWTAuth::parseToken()->authenticate();
 
             $user = User::find($id);
 

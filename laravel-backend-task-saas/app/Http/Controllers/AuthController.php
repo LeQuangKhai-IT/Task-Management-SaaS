@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Http\Requests\AfterVerifyEmailRequest;
 use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\CheckEmailRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -20,7 +19,6 @@ use App\Http\Requests\ResendVerifyEmailRequest;
 use App\Mail\ResetPassword;
 use App\Mail\VerifyEmail;
 use App\Models\User;
-
 
 /**
  * @OA\Info(
@@ -60,6 +58,19 @@ class AuthController extends Controller
         // Validate data
         $validatedData = $request->only('email');
 
+        // Get user's email
+        $user = User::withTrashed()->where('email', $validatedData['email'])->first();
+
+        // Check account has soft delete
+        if ($user->trashed()) {
+            return ApiResponse::error('This account is disabled.', 404);
+        }
+
+        // Check account has been register
+        if ($user) {
+            return ApiResponse::error('Email already registered.', 409);
+        }
+
         // Store email address has not been verified
         $verification_token = Str::random(64);
 
@@ -68,8 +79,10 @@ class AuthController extends Controller
             'verification_token' => $verification_token
         ]);
 
-        $url = url("/api/verify-email?token={$verification_token}&email={$validatedData['email']}");
-
+        $url = route('email.verify', [
+            'token' => $verification_token,
+            'email' => $validatedData['email'],
+        ]);
         // Send email verify
         Mail::to($validatedData['email'])->send(new VerifyEmail($validatedData['email'], $url));
 
@@ -106,7 +119,10 @@ class AuthController extends Controller
         $verification_token = Str::random(64);
         DB::table('email_verifications')->update(['verification_token' => $verification_token]);
 
-        $url = url("/api/verify-email?token={$verification_token}&email={$validatedData['email']}");
+        $url = route('email.verify', [
+            'token' => $verification_token,
+            'email' => $validatedData['email'],
+        ]);
 
         // Send verify email
         Mail::to($validatedData['email'])->send(new VerifyEmail($validatedData['email'], $url));
@@ -211,35 +227,6 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/check-email",
-     *     summary="Check Email Existence",
-     *     tags={"Auth"},
-     *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             @OA\Property(property="email", type="string")
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Email already registered."),
-     *     @OA\Response(response=404, description="Email not found")
-     * )
-     */
-    public function checkEmail(CheckEmailRequest $request)
-    {
-        // Validate input data
-        $validatedData = $request->only('email');
-
-        // Get user's email
-        $user = User::where('email', $validatedData['email'])->first();
-
-        if (!$user) {
-            return ApiResponse::error('Email not found.', 404);
-        }
-
-        return ApiResponse::success(null, 'Email already registered.');
-    }
-
-    /**
-     * @OA\Post(
      *     path="/api/login",
      *     summary="Login",
      *     tags={"Auth"},
@@ -259,20 +246,30 @@ class AuthController extends Controller
         $validatedData = $request->only('email', 'password');
 
         // Get user of email
-        $user = User::where('email', $validatedData['email'])->first();
+        $user = User::withTrashed()->where('email', $validatedData['email'])->first();
 
         // Check verify email
         if (! $user) {
-            return ApiResponse::error('Email address has not been verified.', 401);
+            return ApiResponse::error('Email address has not been verified.', 401, 'verify');
         }
+
+        // Check account availability
+        if ($user->trashed()) {
+            return ApiResponse::error('This account is disabled.', 404);
+        }
+
+        //Check password and fullname
+        if (is_null($user->password) || is_null($user->fullname)) {
+            return ApiResponse::error('Account setup not completed. Please finish registration.', 403);
+        };
 
         // Authentication user
         if (! Hash::check($validatedData['password'], $user->password)) {
-            return ApiResponse::error('Invalid credentials.', 401);
+            return ApiResponse::error('Invalid credentials.', 401, 'unauthentication');
         }
 
         //Create token
-        $token = JWTAuth::attempt($validatedData);
+        $token = JWTAuth::attempt($user->id);
 
         return ApiResponse::success([
             'user' => $user,
@@ -320,7 +317,10 @@ class AuthController extends Controller
         );
 
         // Send email with link reset password
-        $resetLink = url("/api/reset-password?token=$token?userID={$user->id}");
+        $resetLink = route('password.reset', [
+            'userID' => $user->id,
+            'token' => $token,
+        ]);
         Mail::to($user)->send(new ResetPassword($resetLink));
 
         return ApiResponse::success(null, 'Password reset link has been sent to your email.');
@@ -366,7 +366,10 @@ class AuthController extends Controller
                 ]
             );
         // Send email with link reset password
-        $resetLink = url("/api/reset-password?token=$token?userId={$user->id}");
+        $resetLink = route('password.reset', [
+            'token' => $token,
+            'userID' => $user->id,
+        ]);
         Mail::to($user)->send(new ResetPassword($resetLink));
 
         return ApiResponse::success(null, 'Forgot password resent successfully.');
@@ -426,41 +429,6 @@ class AuthController extends Controller
     }
 
     /**
-     * @OA\Get(
-     *     path="/api/me",
-     *     summary="Get Authenticated User",
-     *     tags={"Auth"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Response(
-     *         response=200,
-     *         description="OK",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="data", example={"user": {"id": 1, "email": "user@example.com"}})
-     *         )
-     *     ),
-     *     @OA\Response(response=400, description="Could not retrieve user information"),
-     *     @OA\Response(response=401, description="Invalid or expired token")
-     * )
-     */
-    public function me()
-    {
-        try {
-            // Check token and get user authenticated
-            $user = JWTAuth::parseToken()->authenticate();
-
-            return ApiResponse::success([
-                'user' => $user,
-            ], 'User information retrieved successfully');
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException $e) {
-            return ApiResponse::error('Invalid token', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return ApiResponse::error('Token expired', 401);
-        } catch (\PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException $e) {
-            return ApiResponse::error('Could not retrieve user information', 400);
-        }
-    }
-
-    /**
      * @OA\Post(
      *     path="/api/change-password",
      *     summary="Change User Password",
@@ -468,7 +436,7 @@ class AuthController extends Controller
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
-     *             @OA\Property(property="current_password", type="string"),
+     *             @OA\Property(property="current_password", type="string", default="password"),
      *             @OA\Property(property="new_password", type="string")
      *         )
      *     ),
@@ -515,7 +483,7 @@ class AuthController extends Controller
      *         response=200,
      *         description="OK",
      *         @OA\JsonContent(
-     *             @OA\Property(property="data", example={"user": {"id": 1, "email": "user@example.com"}, "token": "new_jwt_token"})
+     *             @OA\Property(property="data", example={"user": {"id": 1, "email": "user@gmail.com"}, "token": "new_jwt_token"})
      *         )
      *     ),
      *     @OA\Response(response=400, description="Could not refresh token"),

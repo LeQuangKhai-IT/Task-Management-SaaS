@@ -150,37 +150,6 @@
                 }
             }
         },
-        "/api/check-email": {
-            "post": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Check Email Existence",
-                "operationId": "ff64cff5e21b2a67efda6e48a362b304",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Email already registered."
-                    },
-                    "404": {
-                        "description": "Email not found"
-                    }
-                }
-            }
-        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -322,48 +291,6 @@
                 }
             }
         },
-        "/api/me": {
-            "get": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Get Authenticated User",
-                "operationId": "9d9bc556f927575aa492a88c28fe5908",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "data": {
-                                            "example": {
-                                                "user": {
-                                                    "id": 1,
-                                                    "email": "user@example.com"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Could not retrieve user information"
-                    },
-                    "401": {
-                        "description": "Invalid or expired token"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/change-password": {
             "post": {
                 "tags": [
@@ -377,7 +304,8 @@
                             "schema": {
                                 "properties": {
                                     "current_password": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "default": "password"
                                     },
                                     "new_password": {
                                         "type": "string"
@@ -424,7 +352,7 @@
                                             "example": {
                                                 "user": {
                                                     "id": 1,
-                                                    "email": "user@example.com"
+                                                    "email": "user@gmail.com"
                                                 },
                                                 "token": "new_jwt_token"
                                             }
@@ -2886,125 +2814,6 @@
                 "responses": {
                     "200": {
                         "description": "Search results (array or object depending on type)"
-                    }
-                }
-            }
-        },
-        "/api/{provider}/redirect": {
-            "get": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Redirect to provider login page",
-                "description": "Supported providers: google, github, slack",
-                "operationId": "ef28a92994363afab01d183a006c3761",
-                "parameters": [
-                    {
-                        "name": "provider",
-                        "in": "path",
-                        "description": "Authentication provider (google|github|slack)",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "google",
-                                "github",
-                                "slack"
-                            ]
-                        }
-                    }
-                ],
-                "responses": {
-                    "302": {
-                        "description": "Redirect to provider login page",
-                        "headers": {
-                            "Location": {
-                                "description": "URL of provider login page",
-                                "schema": {
-                                    "type": "string",
-                                    "example": "https://accounts.google.com/o/oauth2/auth?..."
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/{provider}/callback": {
-            "get": {
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Handle provider callback",
-                "description": "After login via Google/GitHub/Slack, backend will create user and return JWT token",
-                "operationId": "637bd7b7ce14925bbe174ee226c7b44c",
-                "parameters": [
-                    {
-                        "name": "provider",
-                        "in": "path",
-                        "description": "Authentication provider (google|github|slack)",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Login success",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Login success"
-                                        },
-                                        "access_token": {
-                                            "type": "string",
-                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOi..."
-                                        },
-                                        "token_type": {
-                                            "type": "string",
-                                            "example": "Bearer"
-                                        },
-                                        "user": {
-                                            "properties": {
-                                                "id": {
-                                                    "type": "string",
-                                                    "example": "01993906-c75c-72a0-b3fd-db5da877f928"
-                                                },
-                                                "fullname": {
-                                                    "type": "string",
-                                                    "example": "Lê Quang Khải"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "leequangkhai621@gmail.com"
-                                                },
-                                                "avatar_url": {
-                                                    "type": "string",
-                                                    "example": "https://lh3.googleusercontent.com/..."
-                                                },
-                                                "provider": {
-                                                    "type": "string",
-                                                    "example": "google"
-                                                },
-                                                "provider_id": {
-                                                    "type": "string",
-                                                    "example": "112233445566778899"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized or invalid provider"
                     }
                 }
             }
