@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *     type="object",
  *     @OA\Property(property="id", type="string", format="uuid"),
  *     @OA\Property(property="title", type="string"),
+ *     @OA\Property(property="slug", type="string"),
  *     @OA\Property(property="description", type="string", nullable=true),
  *     @OA\Property(property="workspace_id", type="string", format="uuid"),
  *     @OA\Property(property="background", type="string", nullable=true),

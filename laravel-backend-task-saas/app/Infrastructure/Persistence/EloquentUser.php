@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Infrastructure\Persistence;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -12,23 +12,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-/**
- * @OA\Schema(
- *     schema="User",
- *     type="object",
- *     @OA\Property(property="id", type="string", format="uuid"),
- *     @OA\Property(property="email", type="string", format="email"),
- *     @OA\Property(property="fullname", type="string", nullable=true),
- *     @OA\Property(property="email_verified_at", type="string", format="date-time", nullable=true),
- *     @OA\Property(property="password", type="string", nullable=true),
- *     @OA\Property(property="provider", type="string", nullable=true, enum={"google","github","slack"}),
- *     @OA\Property(property="provider_id", type="string", nullable=true),
- *     @OA\Property(property="avatar_url", type="string", format="uri", nullable=true),
- *     @OA\Property(property="created_at", type="string", format="date-time"),
- *     @OA\Property(property="updated_at", type="string", format="date-time"),
- *     @OA\Property(property="deleted_at", type="string", format="date-time", nullable=true)
- * )
- */
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable, HasUuids, SoftDeletes;

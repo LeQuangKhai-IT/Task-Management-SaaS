@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *     type="object",
  *     @OA\Property(property="id", type="string", format="uuid"),
  *     @OA\Property(property="name", type="string"),
+ *     @OA\Property(property="brief", type="string"),
  *     @OA\Property(property="description", type="string"),
  *     @OA\Property(property="owner_id", type="string", format="uuid"),
  *     @OA\Property(property="visibility", type="string", enum={"public","private"}),

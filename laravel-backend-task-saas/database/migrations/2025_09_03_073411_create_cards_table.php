@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('cards', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('list_id')->constrained('lists')->cascadeOnDelete();
+            $table->integer('card_number')->autoIncrement();
             $table->text('title');
             $table->text('description')->nullable();
             $table->boolean('completed')->default(false);

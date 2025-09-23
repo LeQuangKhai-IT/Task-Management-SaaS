@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('boards', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('title');
+            $table->text('slug');
             $table->text('description')->nullable();
             $table->foreignUuid('workspace_id')->constrained('workspaces')->cascadeOnDelete();
             $table->string('background')->nullable();

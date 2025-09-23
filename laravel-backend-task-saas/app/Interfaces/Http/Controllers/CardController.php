@@ -85,7 +85,7 @@ class CardController extends Controller
             // Authenticate user with JWT token
             JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->validate();
+            $validatedData = $request->safe()->all();
 
             $card = Card::create([
                 'id' => Str::uuid()->toString(),
@@ -186,7 +186,7 @@ class CardController extends Controller
                 return ApiResponse::error('Card not found', 404);
             }
 
-            $validatedData = $request->validate();
+            $validatedData = $request->safe()->all();
 
             $card->update($validatedData);
 

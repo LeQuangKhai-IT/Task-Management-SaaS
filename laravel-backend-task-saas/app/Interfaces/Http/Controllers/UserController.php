@@ -152,7 +152,7 @@ class UserController extends Controller
             }
 
             // Validate input data
-            $validatedData = $request->only('fullname', 'password', 'avatar_url');
+            $validatedData = $request->safe()->only('fullname', 'password', 'avatar_url');
 
             $user->update($validatedData);
 

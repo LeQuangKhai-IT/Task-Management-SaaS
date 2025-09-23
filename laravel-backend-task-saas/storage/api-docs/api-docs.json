@@ -3437,6 +3437,9 @@
                     "title": {
                         "type": "string"
                     },
+                    "slug": {
+                        "type": "string"
+                    },
                     "description": {
                         "type": "string",
                         "nullable": true
@@ -3580,6 +3583,9 @@
                         "format": "uuid"
                     },
                     "name": {
+                        "type": "string"
+                    },
+                    "brief": {
                         "type": "string"
                     },
                     "description": {

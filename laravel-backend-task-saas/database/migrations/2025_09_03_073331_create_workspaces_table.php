@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('workspaces', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('brief')->unique();
             $table->text('description')->nullable();
             $table->foreignUuid('owner_id')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('visibility', ['private', 'public'])->default('private');

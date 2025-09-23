@@ -80,7 +80,7 @@ class ListController extends Controller
             // Authenticate user with JWT token
             $user = JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->only('title', 'board_id', 'position');
+            $validatedData = $request->safe()->only('title', 'board_id', 'position');
 
             $board = Board::where('id', $validatedData['board_id'])
                 ->whereHas('workspace', function ($query) use ($user) {
@@ -175,7 +175,7 @@ class ListController extends Controller
             // Authenticate user with JWT token
             $user = JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->only('title', 'board_id', 'position', 'is_archived');
+            $validatedData = $request->safe()->only('title', 'board_id', 'position', 'is_archived');
 
             $list = TaskList::where('id', $id)
                 ->whereHas('board.workspace', function ($query) use ($user) {

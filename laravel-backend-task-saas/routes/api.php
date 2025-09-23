@@ -28,7 +28,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login')->middleware(['throttle:login'])->name('login');
     Route::post('register', 'register')->name('register');
     Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
-    Route::post('resend-forgot-password', 'resendForgotPassword')->name('password.forgot.resend');
+    Route::post('resend-forgot-password', 'resendForgotPassword')->middleware('throttle:resend')->name('password.forgot.resend');
     Route::post('reset-password', 'resetPassword')->name('password.reset');
     // Email route
     Route::post('check-email', 'checkEmail')->name('email.check');
@@ -46,28 +46,28 @@ Route::controller(AuthController::class)->group(function () {
 
 
 /******************* USER ROUTES *******************/
-Route::apiResource('users', UserController::class)
+Route::prefix('u')->apiResource('users', UserController::class)
     // ->middlewareFor(
     //     ['index', 'show', 'store', 'update', 'destroy'],
-    //     ['jwt.auth']
+    //     ['jwt.auth', 'throttle:10,1']
     // )
 ;
 
 
 /******************* WORKSPACE ROUTES *******************/
-Route::apiResource('workspaces', WorkspaceController::class)
+Route::prefix('w')->apiResource('workspaces', WorkspaceController::class)
     // ->middlewareFor(
     //     ['index', 'show', 'store', 'update', 'destroy'],
-    //     ['jwt.auth']
+    //     ['jwt.auth', 'throttle:10:1']
     // )
 ;
 
 
 /******************* BOARD ROUTES *******************/
-Route::apiResource('boards', BoardController::class)
+Route::prefix('b')->apiResource('boards', BoardController::class)
     // ->middlewareFor(
     //     ['index', 'show', 'store', 'update', 'destroy'],
-    //     ['jwt.auth']
+    //     ['jwt.auth', 'throttle:10,1']
     // )
 ;
 
@@ -76,22 +76,22 @@ Route::apiResource('boards', BoardController::class)
 Route::apiResource('lists', ListController::class)
     // ->middlewareFor(
     //     ['index', 'show', 'store', 'update', 'destroy'],
-    //     ['jwt.auth']
+    //     ['jwt.auth', 'throttle:10,1']
     // )
 ;
 
 
 /******************* CARD ROUTES *******************/
-Route::apiResource('cards', CardController::class)
+Route::prefix('c')->apiResource('cards', CardController::class)
     // ->middlewareFor(
     //     ['index', 'show', 'store', 'update', 'destroy'],
-    //     ['jwt.auth']
+    //     ['jwt.auth','throttle:10,1']
     // )
 ;
 
 
 /******************* WORKSPACE USER *******************/
-Route::prefix('workspaces/{workspace}')->name('workspaces.')->group(function () {
+Route::prefix('workspaces/{workspace}')->middleware(['jwt.auth', 'throttle:10,1'])->name('workspaces.')->group(function () {
     Route::controller(WorkspaceUserController::class)->group(function () {
         Route::get('users', 'index')->name('users');
         Route::post('users', 'store')->name('users.add');
@@ -101,7 +101,7 @@ Route::prefix('workspaces/{workspace}')->name('workspaces.')->group(function () 
 
 
 /******************* BOARD USER *******************/
-Route::prefix('boards/{board}')->name('boards.')->group(function () {
+Route::prefix('boards/{board}')->middleware(['jwt.auth', 'throttle:10,1'])->name('boards.')->group(function () {
     Route::controller(BoardUserController::class)->group(function () {
         Route::get('users', 'index')->name('users');
         Route::post('users', 'store')->name('users.join');
@@ -117,7 +117,7 @@ Route::prefix('boards/{board}')->name('boards.')->group(function () {
 
 
 /******************* CARD RELATIONS *******************/
-Route::prefix('cards/{card}')->group(function () {
+Route::prefix('cards/{card}')->middleware(['jwt.auth', 'throttle:10,1'])->group(function () {
     //users
     Route::controller(CardUserController::class)->group(function () {
         Route::get('users', 'index')->name('cards.users');
@@ -144,14 +144,14 @@ Route::prefix('cards/{card}')->group(function () {
 
 
 /******************* CHECKLIST ITEMS (nested) *******************/
-Route::prefix('checklists/{checklist}')->group(function () {
+Route::prefix('checklists/{checklist}')->middleware(['jwt.auth', 'throttle:10,1'])->group(function () {
     Route::apiResource('items', ChecklistItemController::class);
 });
 
 
 /******************* SEARCH *******************/
 //Search boards
-Route::get('/search', [SearchController::class, 'index'])
+Route::get('/search', [SearchController::class, 'index'])->middleware('jwt.auth')
     ->name('search.global');
 
 /******************* SOCIAL AUTH *******************/

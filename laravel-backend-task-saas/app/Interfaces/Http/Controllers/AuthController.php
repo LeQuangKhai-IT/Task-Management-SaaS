@@ -55,13 +55,13 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        // Validate data
-        $validatedData = $request->only('email');
+        // Validate input data
+        $validatedData = $request->safe()->only('email');
 
-        // Get user's email
+        // Check email has been used register or not
         $user = User::withTrashed()->where('email', $validatedData['email'])->first();
 
-        // Check account has soft delete
+        // Check account has disabled
         if ($user->trashed()) {
             return ApiResponse::error('This account is disabled.', 404);
         }
@@ -106,7 +106,7 @@ class AuthController extends Controller
     public function resendVerifyEmail(ResendVerifyEmailRequest $request)
     {
         // Validate input data
-        $validatedData = $request->only('email');
+        $validatedData = $request->safe()->only('email');
 
         // Check email 
         $checkEmail = DB::table('email_verifications')->where('email', $validatedData['email'])->first();
@@ -201,7 +201,7 @@ class AuthController extends Controller
      */
     public function complete(AfterVerifyEmailRequest $request)
     {
-        $validatedData = $request->only('email', 'fullname', 'password');
+        $validatedData = $request->safe()->only('email', 'fullname', 'password');
 
         // Check user verify
         $user = User::all()->where('email', $validatedData['email'])->first();
@@ -243,7 +243,7 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         // Validate data
-        $validatedData = $request->only('email', 'password');
+        $validatedData = $request->safe()->only('email', 'password');
 
         // Get user of email
         $user = User::withTrashed()->where('email', $validatedData['email'])->first();
@@ -258,7 +258,7 @@ class AuthController extends Controller
             return ApiResponse::error('This account is disabled.', 404);
         }
 
-        //Check password and fullname
+        // Check password and fullname
         if (is_null($user->password) || is_null($user->fullname)) {
             return ApiResponse::error('Account setup not completed. Please finish registration.', 403);
         };
@@ -268,8 +268,14 @@ class AuthController extends Controller
             return ApiResponse::error('Invalid credentials.', 401, 'unauthentication');
         }
 
+        // Update hash version if need
+        if (Hash::needsRehash($user->password)) {
+            $user->password = Hash::make($validatedData['password']);
+            $user->save();
+        }
+
         //Create token
-        $token = JWTAuth::attempt($user->id);
+        $token = JWTAuth::attempt([$user->email, $user->password]);
 
         return ApiResponse::success([
             'user' => $user,
@@ -295,7 +301,7 @@ class AuthController extends Controller
     public function forgotPassword(ForgotPasswordRequest $request)
     {
         // Validate input data
-        $validatedData = $request->only('email');
+        $validatedData = $request->safe()->only('email');
 
         //Get user's email
         $user = User::where('email', $validatedData['email'])->first();
@@ -343,7 +349,7 @@ class AuthController extends Controller
     public function resendForgotPassword(ForgotPasswordRequest $request)
     {
         // Validate input data
-        $validatedData = $request->only('email');
+        $validatedData = $request->safe()->only('email');
 
         // Get user of email
         $user = User::where('email', $validatedData['email'])->first();
@@ -395,7 +401,7 @@ class AuthController extends Controller
     public function resetPassword(ResetPasswordRequest $request)
     {
         // Validate input data
-        $validatedData = $request->only('userID', 'token', 'password');
+        $validatedData = $request->safe()->only('userID', 'token', 'password');
 
         // Get password reset token
         $reset = DB::table('password_reset_tokens')
@@ -449,7 +455,7 @@ class AuthController extends Controller
     {
         try {
             // Validate input data
-            $validatedData = $request->only('current_password', 'new_password');
+            $validatedData = $request->safe()->only('current_password', 'new_password');
 
             // Check token and get user authenticated
             $user = JWTAuth::parseToken()->authenticate();

@@ -139,7 +139,7 @@ class WorkspaceController extends Controller
             // Authenticate user with JWT token
             $user = JWTAuth::parseToken()->authenticate();
 
-            $validatedData = $request->only('name', 'description', 'visibility');
+            $validatedData = $request->safe()->only('name', 'description', 'visibility');
 
             $workspace = Workspace::create([
                 'id' => Str::uuid()->toString(),
@@ -206,7 +206,7 @@ class WorkspaceController extends Controller
                 return ApiResponse::error('Workspace not found', 404);
             }
 
-            $validatedData = $request->only('name', 'description', 'visibility');
+            $validatedData = $request->safe()->only('name', 'description', 'visibility');
 
             $workspace->update($validatedData);
 
