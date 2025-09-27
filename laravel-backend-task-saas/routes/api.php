@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoardActivityController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardLabelController;
@@ -17,41 +16,13 @@ use App\Http\Controllers\FallbackController;
 use App\Http\Controllers\ListController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SocialAuthController;
-use App\Http\Controllers\UserController;
+
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\WorkspaceUserController;
 
 
-/******************* AUTH ROUTES *******************/
-Route::controller(AuthController::class)->group(function () {
-
-    Route::post('login', 'login')->middleware(['throttle:login'])->name('login');
-    Route::post('register', 'register')->name('register');
-    Route::post('forgot-password', 'forgotPassword')->name('password.forgot');
-    Route::post('resend-forgot-password', 'resendForgotPassword')->middleware('throttle:resend')->name('password.forgot.resend');
-    Route::post('reset-password', 'resetPassword')->name('password.reset');
-    // Email route
-    Route::post('check-email', 'checkEmail')->name('email.check');
-    Route::post('send-verify-email', 'checkEmail')->name('email.check');
-    Route::get('verify-email', 'verifyEmail')->name('email.verify');
-    Route::post('resend-verify-email', 'resendVerifyEmail')->name('email.verify.resend');
-    Route::post('verify-complete', 'complete')->name('email.verify.complete');
-    // Need check token
-    Route::middleware('jwt.auth')->group(function () {
-        Route::post('logout', 'logout')->name('logout');
-        Route::post('refresh', 'refresh')->name('refresh');
-        Route::post('change-password', 'changePassword')->name('password.change');
-    });
-});
 
 
-/******************* USER ROUTES *******************/
-Route::prefix('u')->apiResource('users', UserController::class)
-    // ->middlewareFor(
-    //     ['index', 'show', 'store', 'update', 'destroy'],
-    //     ['jwt.auth', 'throttle:10,1']
-    // )
-;
 
 
 /******************* WORKSPACE ROUTES *******************/
